@@ -1,0 +1,7 @@
+{
+  "name": "4dogs-app",
+  "version": "1.0.0",
+  "dependencies": {
+    "@netlify/blobs": "*"
+  }
+}
