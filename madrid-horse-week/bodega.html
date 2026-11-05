@@ -70,7 +70,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .hello{display:flex;flex-direction:column;gap:4px}
 .actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .act{appearance:none;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);color:var(--fg);font:inherit;min-width:0}
-.act b{font:700 .88rem var(--display);letter-spacing:.04em;text-transform:uppercase}
+.act b{font:700 .8rem var(--display);letter-spacing:.02em;text-transform:uppercase;overflow-wrap:anywhere}
 .act span{font-size:.8rem;color:var(--muted)}
 .act .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--accent-soft);color:var(--gold)}
 .act.hero{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px;background:var(--accent);border-color:var(--accent);color:var(--accent-fg);box-shadow:var(--shadow);padding:18px}
@@ -210,8 +210,21 @@ const S={tab:'inicio',srv:{products:{},movements:{},counts:{}},cfg:null,db:null,
   lastSaved:null,cntKind:'cierre',editP:null,importOpen:false,wipe:false,me:''};
 
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},
-  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-S.me=LS.get('mhw-me','');S.outbox=LS.get('mhw-outbox',[]);
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}},
+  del(k){try{localStorage.removeItem(k)}catch(e){}},
+  keys(pre){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(pre))out.push(k)}}catch(e){}return out.sort()}};
+S.me=LS.get('mhw-me','');S.storageOk=true;S.failed=[];
+/* Cada cambio pendiente se guarda en su propia clave: así dos pestañas abiertas no se pisan la cola. */
+function loadQueue(pre){return LS.keys(pre).map(k=>{const v=LS.get(k,null);return v&&v.path?{...v,key:k}:null}).filter(Boolean)}
+{const old=LS.get('mhw-outbox',null);if(Array.isArray(old)&&old.length){old.forEach((it,i)=>LS.set('mhw-ob:'+Date.now().toString(36)+'-'+pad3(i),it))}LS.del('mhw-outbox')}
+function pad3(n){return String(n).padStart(3,'0')}
+S.outbox=loadQueue('mhw-ob:');S.failed=loadQueue('mhw-fail:');
+/* Última copia conocida de la nube: permite abrir la app sin cobertura y seguir viendo catálogo, stock y conteos. */
+for(const col of ['products','movements','counts']){const c=LS.get('mhw-cache-'+col,null);if(c&&typeof c==='object')S.srv[col]=c}
+{const c=LS.get('mhw-cache-config',null);if(c)S.cfg=c}
+function cacheCol(col){const src=S.srv[col];let o=src;if(col==='movements'){o={};for(const[k,v]of Object.entries(src))o[k]=v.sig?{...v,sig:'1'}:v}
+  clearTimeout(cacheCol['t'+col]);cacheCol['t'+col]=setTimeout(()=>LS.set('mhw-cache-'+col,o),300)}
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().catch(()=>{})}catch(e){}
 {const mv=LS.get('mhw-mv',null);if(mv&&mv.items)S.mv={...S.mv,...mv,step:'items'};}
 
 /* ---------- utilidades ---------- */
@@ -234,7 +247,7 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 /* ---------- datos (servidor + cola local) ---------- */
 function view(col){
   const m={};for(const[k,v]of Object.entries(S.srv[col]))m[k]={...v,id:k};
-  for(const it of S.outbox){const[c,id]=it.path.split('/');if(c!==col)continue;
+  for(const it of [...S.failed,...S.outbox]){const[c,id]=it.path.split('/');if(c!==col)continue;
     if(it.op==='set')m[id]={...it.data,id,pending:true};
     else if(it.op==='update')m[id]={...deepMerge(m[id],it.data),id,pending:true};
     else if(it.op==='delete')delete m[id];}
@@ -277,13 +290,22 @@ function dayReport(D){
   return {D,ap,ci,apC,ciC,rows,zn:f.zn}}
 
 /* ---------- cola de escritura (sin conexión) ---------- */
-function persistOutbox(){LS.set('mhw-outbox',S.outbox.map(({inflight,...r})=>r))}
+let qseq=0;
+function qkey(pre){return pre+Date.now().toString(36).padStart(9,'0')+'-'+pad3(qseq++%1000)+'-'+Math.random().toString(36).slice(2,6)}
+function persistItem(it){const ok=LS.set(it.key,{path:it.path,op:it.op,data:it.data,at:it.at});if(!ok&&S.storageOk){S.storageOk=false;rerender()}if(ok&&!S.storageOk)S.storageOk=true;return ok}
+/* Copia de seguridad en el móvil de todo lo registrado aquí (sin firmas), aunque ya esté en la nube. */
+function logLocal(path,op,data){if(path.startsWith('counts/')&&op==='update'&&data&&!data.status)return;
+  const log=LS.get('mhw-log',[]);const d=data&&data.sig?{...data,sig:'(firma)'}:data;log.push({path,op,data:d,at:new Date().toISOString(),by:S.me||''});
+  if(log.length>3000)log.splice(0,log.length-3000);LS.set('mhw-log',log)}
 function enqueue(path,op,data){
+  logLocal(path,op,data);
   const last=S.outbox[S.outbox.length-1];
   if(last&&!last.inflight&&last.path===path){
-    if(op==='update'&&(last.op==='update'||last.op==='set')){last.data=deepMerge(last.data,data);persistOutbox();scheduleFlush();rerender();return}
-    if(op==='set'||op==='delete'){last.op=op;last.data=data;persistOutbox();scheduleFlush();rerender();return}}
-  S.outbox.push({path,op,data});persistOutbox();scheduleFlush();rerender()}
+    if(op==='update'&&(last.op==='update'||last.op==='set')){last.data=deepMerge(last.data,data);persistItem(last);scheduleFlush();rerender();return}
+    if(op==='set'||op==='delete'){last.op=op;last.data=data;persistItem(last);scheduleFlush();rerender();return}}
+  const it={path,op,data,at:new Date().toISOString(),key:qkey('mhw-ob:')};S.outbox.push(it);persistItem(it);scheduleFlush();rerender()}
+function retryFailed(){for(const f of S.failed){LS.del(f.key);const it={...f,key:qkey('mhw-ob:')};S.outbox.push(it);persistItem(it)}S.failed=[];scheduleFlush(100);rerender()}
+window.addEventListener('beforeunload',e=>{if(S.outbox.length){e.preventDefault();e.returnValue=''}});
 function scheduleFlush(ms){clearTimeout(scheduleFlush._t);scheduleFlush._t=setTimeout(flush,ms??350)}
 function withTimeout(p,ms){return Promise.race([p,new Promise((_,r)=>setTimeout(()=>r({code:'timeout'}),ms))])}
 async function flush(){
@@ -291,17 +313,19 @@ async function flush(){
   try{while(S.outbox.length){const it=S.outbox[0];it.inflight=true;
       try{const ref=S.db.doc(it.path);
         await withTimeout(it.op==='set'?ref.set(it.data):it.op==='update'?ref.update(it.data):ref.delete(),15000);
-        S.outbox.shift();persistOutbox();if(S.online!=='live')setOnline('live')}
+        S.outbox.shift();LS.del(it.key);if(S.online!=='live')setOnline('live')}
       catch(e){it.inflight=false;
         if(e&&(e.code==='invalid_argument'||e.code==='quota_exceeded'||e.code==='transform_error')){
-          S.outbox.shift();persistOutbox();
-          toast(e.code==='quota_exceeded'?'La base de datos está llena: no se guardó un cambio.':S.canWrite?'Un cambio no se pudo guardar (sin permiso de escritura o dato no válido).':'No tienes permiso para guardar cambios.');continue}
+          /* Nunca se tira: pasa a "no aceptados", se guarda en el móvil y se puede reintentar o descargar. */
+          S.outbox.shift();LS.del(it.key);const f={...it,key:qkey('mhw-fail:'),err:e.code};delete f.inflight;
+          S.failed.push(f);LS.set(f.key,{path:f.path,op:f.op,data:f.data,at:f.at,err:f.err});
+          toast(e.code==='quota_exceeded'?'La base de datos está llena. El registro queda guardado en este móvil.':'La nube no aceptó un registro. Queda guardado en este móvil: revisa el aviso en Inicio.');continue}
         setOnline('offline');scheduleFlush(15000);break}}}
   finally{S.flushing=false;rerender()}}
 window.addEventListener('online',()=>scheduleFlush(100));
 
 function setOnline(s){S.online=s;paintConn()}
-function paintConn(){const el=document.getElementById('conn'),n=S.outbox.length;el.dataset.s=S.online==='live'&&n?'sync':S.online;
+function paintConn(){const el=document.getElementById('conn'),n=S.outbox.length;if(S.failed.length){el.dataset.s='offline';el.textContent=S.failed.length+' sin aceptar';return}el.dataset.s=S.online==='live'&&n?'sync':S.online;
   el.textContent=S.online==='loading'?'Conectando…':S.online==='local'?'Solo este móvil':
     S.online==='offline'?'Sin conexión'+(n?' · '+n:''):n?'Enviando '+n+'…':'Al día'}
 
@@ -348,6 +372,12 @@ function render(){
 function dock(inner){BAR.innerHTML=`<div class="dock"><div class="wrap"><div>${inner}</div></div></div>`}
 
 function readOnlyNote(){return S.canWrite?'':`<div class="notice bad">${ic('alert')}<div>Solo puedes ver los datos. Pide al responsable que te comparta la app como <b>editor</b> para poder registrar.</div></div>`}
+function safetyNote(){let h='';const n=S.outbox.length;
+  if(!S.storageOk)h+=`<div class="notice bad">${ic('alert')}<div><b>Este móvil no deja guardar copias.</b> Lo que registres sin cobertura solo vive en esta pantalla: no cierres la app hasta ver «Al día» arriba. Suele pasar en modo incógnito o con la memoria llena.</div></div>`;
+  if(S.failed.length)h+=`<div class="notice bad">${ic('alert')}<div style="flex:1"><b>${S.failed.length} ${S.failed.length===1?'registro no aceptado':'registros no aceptados'} por la nube.</b> Están guardados en este móvil y siguen contando en el stock. Normalmente es porque esta cuenta no tiene permiso de editor.
+    <div class="row" style="margin-top:8px"><button class="btn" data-act="retry-failed">Reintentar</button><button class="btn" data-act="backup">Descargar copia</button></div></div></div>`;
+  if(n)h+=`<div class="notice">${ic('alert')}<div><b>${n} ${n===1?'cambio guardado':'cambios guardados'} en este móvil</b>, pendientes de enviar. Se envían solos al volver la cobertura. No borres los datos de la app ni cierres sesión hasta ver «Al día».</div></div>`;
+  return h}
 function nameNote(){return S.me?'':`<div class="card stack" style="gap:10px"><b>¿Cómo te llamas?</b><span class="small muted">Tu nombre queda en cada movimiento y en los reportes.</span>
   <div class="row"><input id="me-in" placeholder="Nombre y apellido" style="flex:1 1 180px" autocomplete="name"><button class="btn primary" data-act="save-me">Guardar</button></div></div>`}
 function noProducts(){return `<div class="card empty"><div class="ic">${ic('productos')}</div><b>Aún no hay productos</b><span>Añade el catálogo de bebidas: uno a uno, pegando la lista desde Excel o con productos de ejemplo para practicar.</span><button class="btn primary" data-go="productos">${ic('plus')}Ir a productos</button></div>`}
@@ -369,7 +399,7 @@ function vInicio(){
   const greet=new Date().getHours()<14?'Buenos días':new Date().getHours()<21?'Buenas tardes':'Buenas noches';
   return `<div class="stack">
   <div class="hello"><span class="eyebrow">${n>=0?'Día '+(n+1)+' de '+c.days.length+' · ':''}${esc(fmtDay(t,true))}</span><h1>${greet}${S.me?', '+esc(S.me.split(' ')[0]):''}</h1></div>
-  ${nameNote()}${readOnlyNote()}
+  ${nameNote()}${readOnlyNote()}${safetyNote()}
   <div class="actions">
     <button class="act hero" data-act="start" data-type="salida"><span class="ic">${ic('salida')}</span><div><b>Salida a zona</b><br><span>${salHoy.length?salHoy.length+' entregas hoy':'Palcos y restaurante'}</span></div><span class="go">${ic('chev')}</span></button>
     <button class="act" data-act="start" data-type="entrada"><span class="ic">${ic('entrada')}</span><b>Entrada</b><span>De proveedor</span></button>
@@ -529,6 +559,7 @@ function vAjustes(){const c=cfg();
    <button class="btn primary" data-act="cfg-save" ${S.canWrite?'':'disabled'}>Guardar evento</button></div>
   ${S.isOwner?`<div class="card stack"><h2>Empezar de cero</h2><span class="small">Borra todos los movimientos y conteos (por ejemplo, después de practicar). Los productos y las zonas se quedan.</span>
    ${S.wipe?`<label class="f">Escribe BORRAR para confirmar<input id="wipe-in" autocomplete="off"></label><div class="row"><button class="btn danger" data-act="wipe-ok">Borrar movimientos y conteos</button><button class="btn" data-act="wipe-cancel">Cancelar</button></div>`:'<button class="btn danger" data-act="wipe">Borrar datos de prueba…</button>'}</div>`:''}
+  <div class="card stack"><h2>Copia de seguridad de este móvil</h2><span class="small">Todo lo que se ha registrado desde este móvil, aunque ya esté en la nube. Úsala si algo falla.</span><button class="btn" data-act="backup">Descargar copia (JSON)</button></div>
   <p class="small muted">Los datos se guardan en la nube y los ve todo el que tenga acceso a esta app. Si se va la cobertura, cada móvil guarda los cambios y los envía al volver la conexión.</p></div>`}
 
 /* ---------- acciones ---------- */
@@ -572,7 +603,8 @@ document.addEventListener('click',e=>{
     samples(){for(const[i,r]of SAMPLE.entries())enqueue('products/ej-'+i,'set',{name:r[0]+' (ejemplo)',cat:r[1],format:r[2],upc:r[3],min:r[4],price:r[5],active:true});toast('Productos de ejemplo cargados')},
     'samples-del'(){const used=usedIds();let n=0;for(const p of products(true))if(p.id.startsWith('ej-')&&!used.has(p.id)){enqueue('products/'+p.id,'delete',null);n++}
       toast(n?n+' productos de ejemplo quitados':'Los ejemplos tienen movimientos: borra antes los datos de prueba en Ajustes')},
-    'cfg-save':saveCfg,
+    'cfg-save':saveCfg,'retry-failed':retryFailed,
+    backup(){saveFile('Copia bodega '+(S.me||'movil').replace(/[^\w ]/g,'')+' '+todayKey()+'.json',JSON.stringify({exportedAt:new Date().toISOString(),by:S.me,pending:S.outbox.map(({inflight,key,...r})=>r),notAccepted:S.failed.map(({key,...r})=>r),log:LS.get('mhw-log',[])},null,1))},
     wipe(){S.wipe=true;render()},'wipe-cancel'(){S.wipe=false;render()},
     'wipe-ok'(){if((document.getElementById('wipe-in').value||'').trim().toUpperCase()!=='BORRAR')return toast('Escribe BORRAR para confirmar');
       for(const id of Object.keys(view('movements')))enqueue('movements/'+id,'delete',null);for(const id of Object.keys(counts()))enqueue('counts/'+id,'delete',null);
@@ -711,8 +743,9 @@ render();
   const err=e=>{if(e&&e.code==='revoked'){S.canWrite=false}setOnline('offline');rerender()};
   for(const col of ['products','movements','counts']){
     const q=col==='movements'?db.collection(col).orderBy('at','desc').limit(1000):db.collection(col);
-    q.onSnapshot(s=>{const m={};for(const d of s.docs)m[d.id]=d.data();S.srv[col]=m;ok(s);rerender()},err)}
-  db.doc('config/event').onSnapshot(s=>{S.cfg=s.exists?s.data():null;rerender()},err);
+    q.onSnapshot(s=>{const m={};for(const d of s.docs)m[d.id]=d.data();if(s.metadata.fromCache&&!s.docs.length&&Object.keys(S.srv[col]).length)return;
+      S.srv[col]=m;ok(s);if(!s.metadata.fromCache)cacheCol(col);rerender()},err)}
+  db.doc('config/event').onSnapshot(s=>{if(s.metadata.fromCache&&!s.exists)return;S.cfg=s.exists?s.data():null;if(!s.metadata.fromCache)LS.set('mhw-cache-config',S.cfg);rerender()},err);
   scheduleFlush(500);
 })();
 </script>
