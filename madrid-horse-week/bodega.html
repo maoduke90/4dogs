@@ -1,131 +1,188 @@
 <title>Bodega Madrid Horse Week</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
 <style>
-/* Layout: one-column phone tool — sticky header, scrolling view, fixed bottom tab bar; max 760px centred on wide screens */
+/* Layout: phone-first single column (max 720px) — slim sticky header, scrolling content, fixed 5-tab bar; action bars dock above the tabs */
 :root{
-  --bg:#eef1ec; --surface:#ffffff; --surface-2:#e3e8e1; --line:#cfd6cc; --fg:#18201b; --muted:#59645c;
-  --accent:#1f5a44; --accent-fg:#ffffff; --accent-soft:#d8e8df;
-  --ok:#2c7a3c; --warn:#9a6200; --warn-soft:#f5e8cc; --bad:#b3261e; --bad-soft:#f8dcd8;
+  --bg:#f1f3ee; --surface:#ffffff; --surface-2:#e7ebe3; --line:#d9dfd4; --fg:#16201a; --muted:#5b675e;
+  --accent:#1c5a43; --accent-2:#2b7a5c; --accent-fg:#ffffff; --accent-soft:#dcebe2;
+  --gold:#b8862f; --ok:#2b7a3b; --warn:#9a6200; --warn-soft:#f6eacf; --bad:#b3261e; --bad-soft:#f9dfdb;
+  --shadow:0 1px 2px rgba(22,32,26,.06),0 6px 18px rgba(22,32,26,.06);
   --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
   --body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#111613; --surface:#19201c; --surface-2:#222b25; --line:#323e36; --fg:#e6ebe5; --muted:#98a59b;
-  --accent:#62b892; --accent-fg:#0c1510; --accent-soft:#1d3a2c;
-  --ok:#6cc27d; --warn:#e2a744; --warn-soft:#3a2e16; --bad:#f2847a; --bad-soft:#3f201c; color-scheme:dark }}
+  --bg:#0f1512; --surface:#18201b; --surface-2:#212b25; --line:#2e3a32; --fg:#e7ece6; --muted:#9aa79e;
+  --accent:#5fb68f; --accent-2:#79c7a3; --accent-fg:#0b1510; --accent-soft:#1c3529;
+  --gold:#d9a94e; --ok:#6cc27d; --warn:#e2a744; --warn-soft:#3a2e16; --bad:#f2847a; --bad-soft:#3f201c;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25); color-scheme:dark }}
 :root[data-theme="dark"]{
-  --bg:#111613; --surface:#19201c; --surface-2:#222b25; --line:#323e36; --fg:#e6ebe5; --muted:#98a59b;
-  --accent:#62b892; --accent-fg:#0c1510; --accent-soft:#1d3a2c;
-  --ok:#6cc27d; --warn:#e2a744; --warn-soft:#3a2e16; --bad:#f2847a; --bad-soft:#3f201c; color-scheme:dark }
+  --bg:#0f1512; --surface:#18201b; --surface-2:#212b25; --line:#2e3a32; --fg:#e7ece6; --muted:#9aa79e;
+  --accent:#5fb68f; --accent-2:#79c7a3; --accent-fg:#0b1510; --accent-soft:#1c3529;
+  --gold:#d9a94e; --ok:#6cc27d; --warn:#e2a744; --warn-soft:#3a2e16; --bad:#f2847a; --bad-soft:#3f201c;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25); color-scheme:dark }
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.4}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--accent)}
-.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--accent);color:var(--accent-fg)}
-header.top .wrap{display:flex;align-items:center;gap:10px;padding-block:10px}
-.brand{flex:1;min-width:0}
-.brand b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--display);font-size:1.35rem;font-weight:700;letter-spacing:.02em;line-height:1.1;text-transform:uppercase}
-.brand span{font-size:.8rem;opacity:.85}
-.brand #conn{opacity:1;display:inline-block;margin-top:3px}
-.hbtn{flex:none;background:transparent;border:1px solid currentColor;color:inherit;border-radius:8px;padding:6px 9px;font:600 .82rem var(--body);cursor:pointer}
-.hbtn[aria-current="page"]{background:var(--accent-fg);color:var(--accent)}
-#conn{font-size:.72rem;padding:3px 8px;border-radius:99px;background:rgba(255,255,255,.18);white-space:nowrap}
-main{padding-block:14px 160px}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+svg.i{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:12px;padding-block:10px}
+.mark{width:36px;height:36px;border-radius:10px;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;flex:none}
+.mark svg{width:20px;height:20px}
+.brand{flex:1;min-width:0;line-height:1.15}
+.brand small{display:block;font:600 .7rem var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.brand b{display:block;font:700 1.15rem var(--display);letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#conn{display:inline-flex;align-items:center;gap:6px;font:600 .75rem var(--body);padding:5px 10px;border-radius:99px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+#conn::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted)}
+#conn[data-s="live"]::before{background:var(--ok)}#conn[data-s="offline"]{background:var(--warn-soft);color:var(--warn)}#conn[data-s="offline"]::before{background:var(--warn)}
+main{padding-block:18px 170px}
+/* tabs */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
-nav.tabs .wrap{display:grid;grid-template-columns:repeat(5,1fr)}
-nav.tabs button{background:none;border:0;color:var(--muted);padding:10px 2px 12px;font:600 .8rem var(--body);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
-nav.tabs button i{font-style:normal;font-family:var(--display);font-size:1.25rem;line-height:1}
-nav.tabs button[aria-current="page"]{color:var(--accent)}
-nav.tabs button[aria-current="page"] i{text-decoration:underline;text-underline-offset:4px}
-h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
-h1{font-size:1.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em}
-h2{font-size:1.25rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
-.stack{display:flex;flex-direction:column;gap:12px}
+nav.tabs .wrap{display:grid;grid-template-columns:repeat(5,1fr);padding-block:6px}
+nav.tabs button{background:none;border:0;color:var(--muted);padding:6px 2px;font:600 .74rem var(--body);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:12px}
+nav.tabs button .pip{display:grid;place-items:center;width:52px;height:30px;border-radius:99px;transition:background .15s}
+nav.tabs button[aria-current="page"]{color:var(--fg)}
+nav.tabs button[aria-current="page"] .pip{background:var(--accent-soft);color:var(--accent)}
+/* type */
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:2rem;font-weight:700;letter-spacing:.01em}
+h2{font-size:1.05rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.eyebrow{font:600 .78rem var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.stack{display:flex;flex-direction:column;gap:14px}
+.sec{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.muted{color:var(--muted)}
-.small{font-size:.85rem}
-.num{font-variant-numeric:tabular-nums}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
-.tile b{display:block;font-family:var(--display);font-size:1.8rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
-.tile span{font-size:.78rem;color:var(--muted)}
-.tile.alert{background:var(--bad-soft);border-color:transparent}.tile.alert b{color:var(--bad)}
-.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:10px;padding:11px 14px;font:600 1rem var(--body);cursor:pointer;min-height:46px}
+.muted{color:var(--muted)}.small{font-size:.86rem}.num{font-variant-numeric:tabular-nums}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+/* buttons */
+.btn{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:12px;padding:12px 16px;font:600 1rem var(--body);cursor:pointer;min-height:48px;text-decoration:none}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
-.btn.danger{color:var(--bad);border-color:var(--bad)}
+.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 45%,transparent)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--accent);padding-inline:8px}
 .btn.block{width:100%}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
-.chip{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:99px;padding:7px 12px;font:600 .88rem var(--body);cursor:pointer;white-space:nowrap}
-.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
-.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.seg button{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:10px;padding:10px 4px;font:600 .9rem var(--body);cursor:pointer}
-.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
-label.f{display:flex;flex-direction:column;gap:4px;font-size:.85rem;font-weight:600;color:var(--muted)}
-input,select,textarea{font:inherit;font-size:1rem;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-width:0}
-textarea{min-height:90px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.list{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.list>*+*{border-top:1px solid var(--line)}
-.cathead{padding:8px 14px;background:var(--surface-2);font:600 .78rem var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-.prow{display:flex;align-items:center;gap:10px;padding:10px 14px;flex-wrap:wrap}
-.prow .pn{flex:1 1 160px;min-width:0}
-.prow .pn b{display:block;font-weight:600}
-.prow .pn small{color:var(--muted);font-size:.8rem}
-.qty{font-family:var(--display);font-size:1.2rem;font-weight:600;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
-.pill{display:inline-block;font:600 .72rem var(--body);padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:active:not(:disabled){transform:translateY(1px)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--accent-2);outline-offset:2px}
+/* home */
+.hello{display:flex;flex-direction:column;gap:4px}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.act{appearance:none;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);color:var(--fg);font:inherit;min-width:0}
+.act b{font:700 1.05rem var(--display);letter-spacing:.02em;text-transform:uppercase}
+.act span{font-size:.8rem;color:var(--muted)}
+.act .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);color:var(--accent)}
+.act.hero{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px;background:var(--accent);border-color:var(--accent);color:var(--accent-fg);box-shadow:var(--shadow);padding:18px}
+.act.hero b{font-size:1.45rem}.act.hero span{color:inherit;opacity:.85}
+.act.hero .ic{background:rgba(255,255,255,.16);color:inherit;width:48px;height:48px}
+.act.hero .go{margin-left:auto}
+.counts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cnt{appearance:none;text-align:left;cursor:pointer;font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.cnt b{font:700 1.1rem var(--display);text-transform:uppercase;letter-spacing:.03em}
+.alerts{display:flex;flex-direction:column;gap:8px}
+.alert{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--bad-soft)}
+.alert .qty{color:var(--bad)}
+/* pills, chips */
+.pill{display:inline-flex;align-items:center;gap:5px;font:700 .7rem var(--body);padding:3px 9px;border-radius:99px;background:var(--surface-2);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
 .pill.bad{background:var(--bad-soft);color:var(--bad)}.pill.warn{background:var(--warn-soft);color:var(--warn)}.pill.ok{background:var(--accent-soft);color:var(--accent)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;margin-inline:-2px;padding-inline:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:99px;padding:8px 14px;font:600 .88rem var(--body);cursor:pointer;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--surface-2);padding:4px;border-radius:14px}
+.seg button{border:0;background:transparent;color:var(--muted);border-radius:10px;padding:9px 2px;font:600 .86rem var(--body);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+.seg button svg{width:20px;height:20px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:var(--shadow)}
+/* forms */
+label.f{display:flex;flex-direction:column;gap:6px;font-size:.86rem;font-weight:600;color:var(--muted)}
+input,select,textarea{font:inherit;font-size:1rem;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;width:100%;min-width:0}
+textarea{min-height:90px;resize:vertical}
+.search{position:relative}.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);width:20px;height:20px}
+.search input{padding-left:44px;border-radius:99px;background:var(--surface)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* zone picker */
+.zones{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.zone{appearance:none;cursor:pointer;font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:76px;justify-content:center}
+.zone b{font:700 1.7rem var(--display);line-height:1}.zone span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.zone em{font-style:normal;font-size:.7rem;color:var(--accent);font-weight:600}
+.zone.wide{grid-column:1/-1;flex-direction:row;gap:12px;min-height:60px}.zone.wide b{font-size:1.3rem;text-transform:uppercase}
+.dest{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--accent-soft);color:var(--fg)}
+.dest b{font:700 1.3rem var(--display)}
+.dest .btn{margin-left:auto;min-height:38px;padding:6px 12px}
+/* product list */
+.list{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.list>*+*{border-top:1px solid var(--line)}
+.cathead{padding:9px 16px;background:var(--surface-2);font:700 .72rem var(--body);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.prow{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;padding:12px 16px;transition:background .15s}
+.prow.on{background:color-mix(in srgb,var(--accent-soft) 60%,var(--surface))}
+.prow .pn{min-width:0}
+.prow .pn b{display:block;font-weight:600;line-height:1.25}
+.prow .pn small{color:var(--muted);font-size:.8rem}
+.prow .steps{grid-column:1/-1;justify-content:flex-start}
+@media (min-width:560px){.prow .steps{grid-column:auto;justify-content:flex-end}}
+.qty{font:600 1.2rem var(--display);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
 .steps{display:flex;gap:8px;flex-wrap:wrap}
-.step{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
-.step button{width:44px;height:44px;border:0;background:var(--surface-2);color:var(--fg);font:700 1.3rem var(--display);cursor:pointer}
-.step input{width:52px;border:0;border-radius:0;text-align:center;padding:6px 2px;font:600 1.15rem var(--display);font-variant-numeric:tabular-nums}
-.step span{font-size:.72rem;color:var(--muted);padding:0 6px 0 0}
-.diff{font-size:.82rem;flex-basis:100%}
-.diff.bad{color:var(--bad);font-weight:600}.diff.ok{color:var(--ok)}
-.sticky-bar{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:5;background:var(--surface);border-top:1px solid var(--line)}
-.sticky-bar .wrap{display:flex;gap:10px;align-items:center;padding-block:10px}
-.sticky-bar .sum{flex:1;min-width:0;font-size:.9rem}
-.notice{border-radius:12px;padding:12px 14px;background:var(--warn-soft);color:var(--fg);font-size:.92rem}
-.notice.bad{background:var(--bad-soft)}
-.notice.ok{background:var(--accent-soft)}
-.empty{text-align:center;padding:28px 16px;color:var(--muted)}
-.empty b{display:block;color:var(--fg);font-family:var(--display);font-size:1.3rem;text-transform:uppercase;margin-bottom:6px}
-.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
-table{border-collapse:collapse;width:100%;font-size:.85rem;font-variant-numeric:tabular-nums}
-th,td{padding:7px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
-th:first-child,td:first-child{text-align:left;white-space:normal;min-width:130px}
-th{font-weight:600;color:var(--muted);background:var(--surface-2);font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
-td.neg{color:var(--bad);font-weight:600}
-.mov{padding:12px 14px;cursor:pointer}
-.mov .top{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
-.mov .top b{font-weight:600}
-.mov.void{opacity:.55}.mov.void b{text-decoration:line-through}
-.mov .detail{margin-top:10px;display:flex;flex-direction:column;gap:8px}
-canvas.sig{width:100%;height:160px;background:#fff;border:1px dashed var(--muted);border-radius:10px;touch-action:none}
-#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(140px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;z-index:20;max-width:calc(100% - 32px);text-align:center}
-@media (max-width:420px){.tiles{grid-template-columns:1fr 1fr 1fr}.tile b{font-size:1.5rem}.grid2{grid-template-columns:1fr}}
+.step{display:flex;align-items:center;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.step button{width:44px;height:46px;border:0;background:var(--surface-2);color:var(--fg);font:700 1.4rem var(--display);cursor:pointer;display:grid;place-items:center}
+.step button:active{background:var(--accent-soft)}
+.step label{display:flex;flex-direction:column;align-items:center;padding:0 2px;min-width:50px}
+.step input{width:48px;border:0;border-radius:0;text-align:center;padding:2px;font:700 1.2rem var(--display);font-variant-numeric:tabular-nums;background:transparent}
+.step label span{font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:-2px}
+.diff{grid-column:1/-1;font-size:.84rem}
+.diff .bad{color:var(--bad);font-weight:700}.diff .ok{color:var(--ok);font-weight:600}
+/* docked bar */
+.dock{position:fixed;left:0;right:0;bottom:calc(68px + env(safe-area-inset-bottom,0px));z-index:5;padding-block:10px;pointer-events:none}
+.dock .wrap>div{pointer-events:auto;display:flex;gap:10px;align-items:center;background:var(--fg);color:var(--bg);border-radius:18px;padding:10px 10px 10px 16px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.dock .sum{flex:1;min-width:0;font-size:.92rem}.dock .sum .muted{color:inherit;opacity:.7}
+.dock .btn{min-height:44px;border-color:transparent}
+.dock .btn.primary{background:var(--accent-2);color:#06120c}
+.dock .btn.sec{background:transparent;color:var(--bg);border-color:color-mix(in srgb,var(--bg) 35%,transparent)}
+/* misc */
+.notice{border-radius:14px;padding:12px 14px;background:var(--warn-soft);font-size:.93rem;display:flex;gap:10px;align-items:flex-start}
+.notice.bad{background:var(--bad-soft)}.notice.ok{background:var(--accent-soft)}
+.notice svg{margin-top:1px}
+.empty{text-align:center;padding:30px 18px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:8px}
+.empty .ic{width:56px;height:56px;border-radius:16px;background:var(--surface-2);display:grid;place-items:center;color:var(--accent)}
+.empty b{color:var(--fg);font:700 1.3rem var(--display);text-transform:uppercase}
+.done{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:26px 18px}
+.done .ic{width:64px;height:64px;border-radius:50%;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center}
+.done .ic svg{width:32px;height:32px;stroke-width:2.5}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left;white-space:normal;min-width:140px}
+th{font-weight:700;color:var(--muted);background:var(--surface-2);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+tr:last-child td{border-bottom:0}
+td.neg{color:var(--bad);font-weight:700}
+.mov{padding:14px 16px;cursor:pointer}
+.mov .top{display:flex;gap:10px;align-items:center}
+.mov .ti{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--surface-2);color:var(--accent);flex:none}
+.mov .ti svg{width:18px;height:18px}
+.mov .tx{flex:1;min-width:0}.mov .tx b{font-weight:600}
+.mov.void{opacity:.55}.mov.void .tx b{text-decoration:line-through}
+.mov .detail{margin-top:12px;display:flex;flex-direction:column;gap:8px;padding-left:46px}
+.menu{display:flex;flex-direction:column}
+.menu button{appearance:none;font:inherit;color:var(--fg);background:none;border:0;display:flex;align-items:center;gap:14px;padding:16px;text-align:left;cursor:pointer}
+.menu button .ti{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);color:var(--accent);flex:none}
+.menu button b{display:block;font-weight:600}.menu button span{font-size:.84rem;color:var(--muted)}
+.menu button .chev{margin-left:auto;color:var(--muted)}
+.back{align-self:flex-start}
+canvas.sig{width:100%;height:170px;background:#fbfbf8;border:1.5px dashed var(--line);border-radius:14px;touch-action:none}
+#toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(70px + env(safe-area-inset-top,0px));background:var(--fg);color:var(--bg);padding:11px 18px;border-radius:12px;font-weight:600;z-index:20;max-width:calc(100% - 32px);text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+@media (max-width:400px){.actions{grid-template-columns:1fr 1fr 1fr;gap:8px}.act{padding:12px 10px}.act b{font-size:.95rem}.zones{grid-template-columns:repeat(4,1fr)}.grid2{grid-template-columns:1fr}h1{font-size:1.75rem}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
 <header class="top"><div class="wrap">
-  <div class="brand"><b id="evname">Madrid Horse Week</b><span id="evsub">Bodega · IFEMA Madrid</span> <span id="conn">Cargando…</span></div>
-  <button class="hbtn" data-go="productos" id="hb-productos">Productos</button>
-  <button class="hbtn" data-go="ajustes" id="hb-ajustes" aria-label="Ajustes">Ajustes</button>
+  <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" class="i"><path d="M10 2h4v4l2 3v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V9l2-3z"/><path d="M8 13h8"/></svg></div>
+  <div class="brand"><small id="evsub">Bodega · IFEMA Madrid</small><b id="evname">Madrid Horse Week</b></div>
+  <span id="conn" data-s="loading">Conectando…</span>
 </div></header>
 <main class="wrap" id="view"></main>
 <div id="bar"></div>
-<nav class="tabs"><div class="wrap">
-  <button data-go="stock"><i>▦</i>Stock</button>
-  <button data-go="mover"><i>⇄</i>Mover</button>
-  <button data-go="contar"><i>#</i>Contar</button>
-  <button data-go="historial"><i>≡</i>Historial</button>
-  <button data-go="reportes"><i>⎙</i>Reportes</button>
-</div></nav>
-<div id="toast" hidden></div>
+<nav class="tabs" aria-label="Secciones"><div class="wrap" id="tabs"></div></nav>
+<div id="toast" hidden role="status"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -146,7 +203,7 @@ const SAMPLE=[['Agua mineral 50 cl','Agua','Botella 50 cl',24,48,0.35],['Agua co
  ['Ginebra 70 cl','Destilado','Botella 70 cl',6,3,14],['Zumo naranja 20 cl','Zumo','Botella 20 cl',24,24,0.6]];
 
 /* ---------- estado ---------- */
-const S={tab:'stock',srv:{products:{},movements:{},counts:{}},cfg:null,db:null,user:null,uid:null,
+const S={tab:'inicio',srv:{products:{},movements:{},counts:{}},cfg:null,db:null,user:null,uid:null,
   canWrite:true,isOwner:false,online:'loading',outbox:[],flushing:false,
   day:todayKey(),q:'',cat:'',histType:'',open:null,voiding:null,repDay:null,
   mv:{type:'salida',zone:'',items:{},ref:'',note:'',receiver:'',sig:'',step:'items',q:'',cat:''},
@@ -244,9 +301,32 @@ async function flush(){
 window.addEventListener('online',()=>scheduleFlush(100));
 
 function setOnline(s){S.online=s;paintConn()}
-function paintConn(){const el=document.getElementById('conn'),n=S.outbox.length;
-  el.textContent=S.online==='loading'?'Conectando…':S.online==='local'?'Solo este móvil'+(n?' · '+n+' sin enviar':''):
-    S.online==='offline'?'Sin conexión'+(n?' · '+n+' sin enviar':''):n?'Enviando '+n+'…':'Sincronizado'}
+function paintConn(){const el=document.getElementById('conn'),n=S.outbox.length;el.dataset.s=S.online==='live'&&n?'sync':S.online;
+  el.textContent=S.online==='loading'?'Conectando…':S.online==='local'?'Solo este móvil':
+    S.online==='offline'?'Sin conexión'+(n?' · '+n:''):n?'Enviando '+n+'…':'Al día'}
+
+/* ---------- iconos ---------- */
+const IC={
+ inicio:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+ mover:'<path d="M4 8h15l-4-4"/><path d="M20 16H5l4 4"/>',
+ contar:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2.5h6V4"/><path d="M9 13l2 2 4-4"/>',
+ reportes:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/>',
+ mas:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+ salida:'<path d="M4 12h14"/><path d="M13 6l6 6-6 6"/>',
+ entrada:'<path d="M3 7h3l2 10h10l2-7H8"/><circle cx="10" cy="20" r="1"/><circle cx="17" cy="20" r="1"/>',
+ devolucion:'<path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-4"/>',
+ merma:'<path d="M12 3l10 18H2z"/><path d="M12 10v4"/><path d="M12 17.5v.5"/>',
+ historial:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ productos:'<path d="M10 2h4v4l2 3v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V9l2-3z"/><path d="M8 13h8"/>',
+ ajustes:'<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+ check:'<path d="M5 12l5 5 9-10"/>',chev:'<path d="M9 6l6 6-6 6"/>',back:'<path d="M15 6l-6 6 6 6"/>',
+ alert:'<circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16v.5"/>',
+ pdf:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>'};
+function ic(n,cls){return `<svg class="i ${cls||''}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||''}</svg>`}
+const TABS=[['inicio','Inicio'],['mover','Mover'],['contar','Contar'],['reportes','Reportes'],['mas','Más']];
+const SUB={historial:'mas',productos:'mas',ajustes:'mas'};
 
 /* ---------- render ---------- */
 const V=document.getElementById('view'),BAR=document.getElementById('bar');
@@ -254,143 +334,170 @@ let needsRender=false;
 function typing(){const a=document.activeElement;return a&&V.contains(a)&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA'||a.tagName==='SELECT')}
 function rerender(){paintConn();if(typing()){needsRender=true;return}render()}
 document.addEventListener('focusout',()=>setTimeout(()=>{if(needsRender&&!typing()){needsRender=false;render()}},0));
+document.getElementById('tabs').innerHTML=TABS.map(([k,l])=>`<button data-go="${k}"><span class="pip">${ic(k)}</span>${l}</button>`).join('');
 
 function render(){
   const c=cfg();document.getElementById('evname').textContent=c.event;document.getElementById('evsub').textContent='Bodega · '+c.venue;
-  document.querySelectorAll('[data-go]').forEach(b=>b.setAttribute('aria-current',b.dataset.go===S.tab?'page':'false'));
+  const cur=SUB[S.tab]||S.tab;
+  document.querySelectorAll('nav [data-go]').forEach(b=>b.setAttribute('aria-current',b.dataset.go===cur?'page':'false'));
   BAR.innerHTML='';
-  const fn={stock:vStock,mover:vMover,contar:vContar,historial:vHist,reportes:vRep,productos:vProd,ajustes:vAjustes}[S.tab]||vStock;
+  const fn={inicio:vInicio,mover:vMover,contar:vContar,historial:vHist,reportes:vRep,productos:vProd,ajustes:vAjustes,mas:vMas}[S.tab]||vInicio;
   const y=window.scrollY;V.innerHTML=fn();window.scrollTo(0,y);
   if(S.tab==='mover'&&S.mv.step==='confirm')setupSig();
   paintConn()}
+function dock(inner){BAR.innerHTML=`<div class="dock"><div class="wrap"><div>${inner}</div></div></div>`}
 
-function readOnlyNote(){return S.canWrite?'':'<div class="notice bad">Solo puedes ver los datos. Pide al responsable que te comparta la app como editor para poder registrar.</div>'}
-function nameNote(){return S.me?'':`<div class="card stack"><b>¿Quién eres?</b><span class="small muted">Tu nombre aparece en cada movimiento y en los reportes.</span>
-  <div class="row"><input id="me-in" placeholder="Nombre y apellido" style="flex:1"><button class="btn primary" data-act="save-me">Guardar</button></div></div>`}
-function noProducts(){return `<div class="card empty"><b>Aún no hay productos</b>Añade el catálogo de bebidas en <a href="#productos" data-go="productos">Productos</a>: uno a uno, pegando una lista de Excel o cargando ejemplos para probar.</div>`}
+function readOnlyNote(){return S.canWrite?'':`<div class="notice bad">${ic('alert')}<div>Solo puedes ver los datos. Pide al responsable que te comparta la app como <b>editor</b> para poder registrar.</div></div>`}
+function nameNote(){return S.me?'':`<div class="card stack" style="gap:10px"><b>¿Cómo te llamas?</b><span class="small muted">Tu nombre queda en cada movimiento y en los reportes.</span>
+  <div class="row"><input id="me-in" placeholder="Nombre y apellido" style="flex:1 1 180px" autocomplete="name"><button class="btn primary" data-act="save-me">Guardar</button></div></div>`}
+function noProducts(){return `<div class="card empty"><div class="ic">${ic('productos')}</div><b>Aún no hay productos</b><span>Añade el catálogo de bebidas: uno a uno, pegando la lista desde Excel o con productos de ejemplo para practicar.</span><button class="btn primary" data-go="productos">${ic('plus')}Ir a productos</button></div>`}
+function searchBox(id,val){return `<div class="search">${ic('search')}<input id="${id}" type="search" placeholder="Buscar bebida" value="${esc(val)}" autocomplete="off"></div>`}
 function dayChips(sel,act){const c=cfg(),days=[...c.days];const t=todayKey();if(!days.includes(t))days.push(t);if(sel&&!days.includes(sel))days.push(sel);days.sort();
-  return `<div class="chips">${days.map(d=>`<button class="chip" data-act="${act}" data-day="${d}" aria-pressed="${d===sel}">${esc(fmtDay(d))}${d===t?' · hoy':''}</button>`).join('')}</div>`}
-function catChips(sel,act){return `<div class="chips"><button class="chip" data-act="${act}" data-cat="" aria-pressed="${!sel}">Todo</button>${CATS.filter(k=>products().some(p=>p.cat===k)).map(k=>`<button class="chip" data-act="${act}" data-cat="${esc(k)}" aria-pressed="${sel===k}">${esc(k)}</button>`).join('')}</div>`}
+  return `<div class="chips">${days.map(d=>{const n=c.days.indexOf(d);return `<button class="chip" data-act="${act}" data-day="${d}" aria-pressed="${d===sel}">${n>=0?'Día '+(n+1)+' · ':''}${esc(fmtDay(d))}${d===t?' (hoy)':''}</button>`}).join('')}</div>`}
+function catChips(sel,act){return `<div class="chips"><button class="chip" data-act="${act}" data-cat="" aria-pressed="${!sel}">Todas</button>${CATS.filter(k=>products().some(p=>p.cat===k)).map(k=>`<button class="chip" data-act="${act}" data-cat="${esc(k)}" aria-pressed="${sel===k}">${esc(k)}</button>`).join('')}</div>`}
 function filterP(q,cat){q=(q||'').toLowerCase();return products().filter(p=>(!cat||p.cat===cat)&&(!q||(p.name+' '+p.format).toLowerCase().includes(q)))}
 function grouped(list,rowFn){let out='',last='';for(const p of list){if(p.cat!==last){last=p.cat;out+=`<div class="cathead">${esc(p.cat||'Sin categoría')}</div>`}out+=rowFn(p)}return out}
+function backBtn(){return `<button class="btn ghost back" data-go="mas">${ic('back')}Más</button>`}
+function cntState(c){if(!c)return '<span class="pill warn">Pendiente</span>';if(c.status==='closed')return `<span class="pill ok">${ic('check')}Cerrado ${fmtTime(c.closedAt)}</span>`;return '<span class="pill">En curso</span>'}
 
-/* --- Stock --- */
-function vStock(){
-  const ps=products(),{st,base}=stockAt(null);const t=todayKey();
+/* --- Inicio --- */
+function vInicio(){
+  const ps=products(),{st,base}=stockAt(null),t=todayKey(),c=cfg(),n=c.days.indexOf(t);
   const low=ps.filter(p=>p.min>0&&(st[p.id]||0)<p.min);
   const salHoy=activeMovs().filter(m=>m.type==='salida'&&dayKey(m.at)===t);
-  const salU=salHoy.reduce((a,m)=>a+Object.values(m.items||{}).reduce((x,y)=>x+y,0),0);
-  const list=filterP(S.q,S.cat);
-  return `<div class="stack">${nameNote()}${readOnlyNote()}
-  <div class="tiles"><div class="tile ${low.length?'alert':''}"><b>${low.length}</b><span>Bajo mínimo</span></div>
-   <div class="tile"><b>${salHoy.length}</b><span>Salidas hoy · ${salU} u</span></div>
-   <div class="tile"><b>${base?fmtTime(base.closedAt):'—'}</b><span>${base?'Último conteo · '+esc(fmtDay(dayKey(base.closedAt))):'Sin conteo cerrado'}</span></div></div>
-  ${!base&&ps.length?'<div class="notice">Haz el <b>conteo inicial</b> en la pestaña Contar antes de empezar a mover mercancía. Hasta entonces el stock solo suma entradas y resta salidas.</div>':''}
-  <div class="row"><h1 style="flex:1">Stock en bodega</h1></div>
-  ${ps.length?`<input id="q-stock" type="search" placeholder="Buscar producto" value="${esc(S.q)}">${catChips(S.cat,'cat-stock')}
+  const C=counts(),list=filterP(S.q,S.cat);
+  const greet=new Date().getHours()<14?'Buenos días':new Date().getHours()<21?'Buenas tardes':'Buenas noches';
+  return `<div class="stack">
+  <div class="hello"><span class="eyebrow">${n>=0?'Día '+(n+1)+' de '+c.days.length+' · ':''}${esc(fmtDay(t,true))}</span><h1>${greet}${S.me?', '+esc(S.me.split(' ')[0]):''}</h1></div>
+  ${nameNote()}${readOnlyNote()}
+  <div class="actions">
+    <button class="act hero" data-act="start" data-type="salida"><span class="ic">${ic('salida')}</span><div><b>Salida a zona</b><br><span>${salHoy.length?salHoy.length+' entregas hoy':'Palcos y restaurante'}</span></div><span class="go">${ic('chev')}</span></button>
+    <button class="act" data-act="start" data-type="entrada"><span class="ic">${ic('entrada')}</span><b>Entrada</b><span>De proveedor</span></button>
+    <button class="act" data-act="start" data-type="devolucion"><span class="ic">${ic('devolucion')}</span><b>Devolución</b><span>Vuelve a bodega</span></button>
+    <button class="act" data-act="start" data-type="merma"><span class="ic">${ic('merma')}</span><b>Merma</b><span>Rotura o pérdida</span></button>
+  </div>
+  <div class="sec"><div class="sec-h"><h2>Conteos de hoy</h2></div>
+   <div class="counts">${['apertura','cierre'].map(k=>`<button class="cnt" data-act="goto-count" data-kind="${k}"><b>${k==='apertura'?'Apertura':'Cierre'}</b>${cntState(C[t+'_'+k])}<span class="small muted">${k==='apertura'?'Antes de la primera salida':'Al terminar el servicio'}</span></button>`).join('')}</div></div>
+  ${low.length?`<div class="sec"><div class="sec-h"><h2>Bajo mínimo</h2><span class="pill bad">${low.length}</span></div><div class="alerts">${low.map(p=>`<div class="alert">${ic('alert')}<div style="flex:1;min-width:0"><b>${esc(p.name)}</b><div class="small muted">Mínimo ${esc(cu(p.min,p.upc))}</div></div><div class="qty">${esc(cu(st[p.id]||0,p.upc))}</div></div>`).join('')}</div></div>`:''}
+  <div class="sec"><div class="sec-h"><h2>Stock en bodega</h2><span class="small muted">${base?'Base: conteo '+esc(fmtDay(dayKey(base.closedAt)))+' '+fmtTime(base.closedAt):'Sin conteo cerrado'}</span></div>
+  ${!base&&ps.length?`<div class="notice">${ic('alert')}<div>Haz el <b>conteo de apertura</b> antes de empezar a mover mercancía. Hasta entonces el stock solo suma entradas y resta salidas.</div></div>`:''}
+  ${ps.length?`${searchBox('q-stock',S.q)}${catChips(S.cat,'cat-stock')}
   <div class="list">${list.length?grouped(list,p=>{const v=st[p.id]||0,isLow=p.min>0&&v<p.min;
-    return `<div class="prow"><div class="pn"><b>${esc(p.name)}</b><small>${esc(p.format)}${p.upc>1?' · caja de '+p.upc:''}${p.min?' · mín. '+esc(cu(p.min,p.upc)):''}</small></div>
-    ${isLow?'<span class="pill bad">Bajo</span>':''}<div class="qty" style="color:${v<0?'var(--bad)':'inherit'}">${esc(cu(v,p.upc))}</div></div>`}):'<div class="empty">Ningún producto coincide.</div>'}</div>`:noProducts()}
+    return `<div class="prow"><div class="pn"><b>${esc(p.name)}</b><small>${esc(p.format)}${p.upc>1?' · caja de '+p.upc:''}</small></div>
+    <div class="row" style="justify-content:flex-end">${isLow?'<span class="pill bad">Bajo</span>':''}<span class="qty" style="color:${v<0||isLow?'var(--bad)':'inherit'}">${esc(cu(v,p.upc))}</span></div></div>`}):'<div class="empty">Ninguna bebida coincide.</div>'}</div>`:noProducts()}</div>
   </div>`}
 
 /* --- Mover --- */
 function mvTotal(pid){const q=S.mv.items[pid];if(!q)return 0;const p=P(pid);return(q.c||0)*((p&&p.upc)||1)+(q.u||0)}
 function mvLines(){return Object.keys(S.mv.items).filter(pid=>P(pid)&&mvTotal(pid)>0)}
 function saveMv(){const {step,...rest}=S.mv;LS.set('mhw-mv',{...rest,sig:''})}
-function stepper(ctx,pid,f,val,label){return `<div class="step"><button data-act="dec" data-ctx="${ctx}" data-pid="${pid}" data-f="${f}" aria-label="Menos ${label}">−</button><input inputmode="numeric" pattern="[0-9]*" id="${ctx}-${f}-${pid}" data-qty data-ctx="${ctx}" data-pid="${pid}" data-f="${f}" value="${val||''}" placeholder="0" aria-label="${label}"><span>${label}</span><button data-act="inc" data-ctx="${ctx}" data-pid="${pid}" data-f="${f}" aria-label="Más ${label}">+</button></div>`}
+function stepper(ctx,pid,f,val,label){return `<div class="step"><button data-act="dec" data-ctx="${ctx}" data-pid="${pid}" data-f="${f}" aria-label="Menos ${label}">−</button><label><input inputmode="numeric" pattern="[0-9]*" id="${ctx}-${f}-${pid}" data-qty data-ctx="${ctx}" data-pid="${pid}" data-f="${f}" value="${val||''}" placeholder="0"><span>${label}</span></label><button data-act="inc" data-ctx="${ctx}" data-pid="${pid}" data-f="${f}" aria-label="Más ${label}">+</button></div>`}
+function typeSeg(){return `<div class="seg">${Object.entries(TYPES).map(([k,t])=>`<button data-act="mv-type" data-type="${k}" aria-pressed="${S.mv.type===k}">${ic(k)}${t.label}</button>`).join('')}</div>`}
+function zoneGrid(){const m=S.mv,zones=m.type==='merma'?[BODEGA,...cfg().zones]:cfg().zones,t=todayKey();
+  const hoy={};for(const x of activeMovs())if(x.type==='salida'&&dayKey(x.at)===t)hoy[x.zone]=(hoy[x.zone]||0)+1;
+  const q=m.type==='salida'?'¿A qué zona va?':m.type==='devolucion'?'¿Qué zona devuelve?':'¿Dónde se produjo?';
+  return `<h1>${q}</h1><div class="zones">${zones.map(z=>{const mm=/^Palco\s+(\S+)$/i.exec(z);
+    return mm?`<button class="zone" data-act="mv-zone" data-zone="${esc(z)}"><span>Palco</span><b>${esc(mm[1])}</b>${hoy[z]?`<em>${hoy[z]} hoy</em>`:''}</button>`
+      :`<button class="zone wide" data-act="mv-zone" data-zone="${esc(z)}"><b>${esc(z)}</b>${hoy[z]?`<em>${hoy[z]} entregas hoy</em>`:''}</button>`}).join('')}</div>`}
 function vMover(){
   const m=S.mv,ps=products();
-  if(S.lastSaved){const L=S.lastSaved;return `<div class="stack"><div class="notice ok"><b>${esc(TYPES[L.type].long)} registrada.</b> ${esc(L.zone||'')} · ${L.n} productos · ${fmtTime(L.at)}${S.outbox.length?' · se enviará al recuperar la conexión':''}</div>
-    ${L.type==='salida'?'<button class="btn primary block" data-act="vale" data-id="'+L.id+'">Descargar vale de entrega (PDF)</button>':''}
-    <button class="btn block" data-act="mv-new">Nuevo movimiento</button></div>`}
+  if(S.lastSaved){const L=S.lastSaved;return `<div class="card done"><div class="ic">${ic('check')}</div><h1>${esc(TYPES[L.type].long)} registrada</h1>
+    <div class="muted">${L.type==='entrada'?'Bodega':esc(L.zone||'')} · ${L.n} ${L.n===1?'producto':'productos'} · ${fmtTime(L.at)}</div>
+    ${S.outbox.length?`<div class="notice" style="text-align:left">${ic('alert')}<div>Sin conexión: se guardó en este móvil y se enviará solo al volver la cobertura.</div></div>`:''}
+    <div class="stack" style="width:100%;gap:10px;margin-top:6px">${L.type==='salida'?`<button class="btn primary block" data-act="vale" data-id="${L.id}">${ic('pdf')}Descargar vale de entrega</button>`:''}
+    <button class="btn block" data-act="mv-new">${L.type==='salida'?'Otra salida':'Nuevo movimiento'}</button><button class="btn ghost block" data-go="inicio">Volver al inicio</button></div></div>`}
   if(!ps.length)return `<div class="stack"><h1>Mover mercancía</h1>${noProducts()}</div>`;
-  const zones=m.type==='merma'?[BODEGA,...cfg().zones]:m.type==='entrada'?[]:cfg().zones;
-  const head=`<div class="seg">${Object.entries(TYPES).map(([k,t])=>`<button data-act="mv-type" data-type="${k}" aria-pressed="${m.type===k}">${t.label}</button>`).join('')}</div>
-   ${m.type==='entrada'?`<label class="f">Proveedor / nº de albarán<input id="mv-ref" value="${esc(m.ref)}" placeholder="Ej. Mahou · ALB-20931"></label>`:
-     `<label class="f">${m.type==='salida'?'Zona de destino':m.type==='devolucion'?'Zona que devuelve':'Dónde se produjo'}<select id="mv-zone"><option value="">Elegir…</option>${zones.map(z=>`<option ${m.zone===z?'selected':''}>${esc(z)}</option>`).join('')}</select></label>`}`;
-  if(m.step==='confirm'){const lines=mvLines();
-    BAR.innerHTML=`<div class="sticky-bar"><div class="wrap"><button class="btn" data-act="mv-back">Volver</button><button class="btn primary" style="flex:1" data-act="mv-save" ${S.canWrite?'':'disabled'}>Confirmar ${esc(TYPES[m.type].label.toLowerCase())}</button></div></div>`;
-    return `<div class="stack"><h1>Revisar ${esc(TYPES[m.type].long.toLowerCase())}</h1>
-    <div class="card small"><b>${esc(m.type==='entrada'?(m.ref||'Sin albarán'):m.zone)}</b> · ${lines.length} productos · lo registra ${esc(S.me||'sin nombre')}</div>
+  if(m.type!=='entrada'&&!m.zone)return `<div class="stack">${nameNote()}${readOnlyNote()}${typeSeg()}${zoneGrid()}</div>`;
+  const dest=m.type==='entrada'?`<label class="f">Proveedor / nº de albarán<input id="mv-ref" value="${esc(m.ref)}" placeholder="Ej. Distribuidora · ALB-20931"></label>`
+    :`<div class="dest">${ic(m.type)}<div><div class="small muted">${m.type==='salida'?'Destino':m.type==='devolucion'?'Devuelve':'Lugar'}</div><b>${esc(m.zone)}</b></div><button class="btn" data-act="mv-zone-clear">Cambiar</button></div>`;
+  if(m.step==='confirm'){const lines=mvLines(),tot=lines.reduce((a,pid)=>a+mvTotal(pid),0);
+    dock(`<button class="btn sec" data-act="mv-back">${ic('back')}Editar</button><div class="sum"><b>${lines.length} productos</b><br><span class="muted">${tot} unidades</span></div><button class="btn primary" data-act="mv-save" ${S.canWrite?'':'disabled'}>${ic('check')}Confirmar</button>`);
+    return `<div class="stack"><span class="eyebrow">Revisar y confirmar</span><h1>${esc(TYPES[m.type].long)}</h1>${dest}
     <div class="list">${lines.map(pid=>{const p=P(pid);return `<div class="prow"><div class="pn"><b>${esc(p.name)}</b><small>${esc(p.format)}</small></div><div class="qty">${esc(cu(mvTotal(pid),p.upc))}</div></div>`}).join('')}</div>
-    ${m.type==='salida'?`<label class="f">Recibe (nombre)<input id="mv-rec" value="${esc(m.receiver)}" placeholder="Responsable de la zona"></label>
-      <div class="stack" style="gap:6px"><div class="row"><span class="small muted" style="flex:1;font-weight:600">Firma de quien recibe (opcional)</span><button class="chip" data-act="sig-clear">Borrar firma</button></div><canvas class="sig" id="sig" width="600" height="180"></canvas></div>`:''}
-    <label class="f">${m.type==='merma'?'Motivo (rotura, caducado, invitación…)':'Nota (opcional)'}<textarea id="mv-note" placeholder="${m.type==='merma'?'Obligatorio para mermas':''}">${esc(m.note)}</textarea></label></div>`}
+    ${m.type==='salida'?`<label class="f">Quién recibe<input id="mv-rec" value="${esc(m.receiver)}" placeholder="Responsable del palco o del restaurante" autocomplete="off"></label>
+      <div class="stack" style="gap:6px"><div class="row" style="justify-content:space-between"><span class="small muted" style="font-weight:600">Firma de quien recibe (opcional)</span><button class="btn ghost" data-act="sig-clear" style="min-height:32px;padding:4px 8px">Borrar</button></div><canvas class="sig" id="sig" width="600" height="180" aria-label="Zona de firma"></canvas></div>`:''}
+    <label class="f">${m.type==='merma'?'Motivo (rotura, caducado, invitación…)':'Nota (opcional)'}<textarea id="mv-note" placeholder="${m.type==='merma'?'Obligatorio en mermas':''}">${esc(m.note)}</textarea></label>
+    <div class="small muted">Lo registra: <b>${esc(S.me||'sin nombre')}</b></div></div>`}
   const {st}=stockAt(null),list=filterP(m.q,m.cat),lines=mvLines(),tot=lines.reduce((a,pid)=>a+mvTotal(pid),0);
-  BAR.innerHTML=`<div class="sticky-bar"><div class="wrap"><div class="sum" id="mvsum">${sumText(lines.length,tot)}</div>
-    ${lines.length?'<button class="btn" data-act="mv-clear">Vaciar</button>':''}<button class="btn primary" data-act="mv-review" ${lines.length?'':'disabled'}>Revisar</button></div></div>`;
-  return `<div class="stack">${nameNote()}${readOnlyNote()}${head}
-   <input id="q-mv" type="search" placeholder="Buscar producto" value="${esc(m.q)}">${catChips(m.cat,'cat-mv')}
-   <div class="list">${list.length?grouped(list,p=>{const q=m.items[p.id]||{},v=st[p.id]||0,over=m.type==='salida'&&mvTotal(p.id)>v;
-     return `<div class="prow"><div class="pn"><b>${esc(p.name)}</b><small>${esc(p.format)} · en bodega ${esc(cu(v,p.upc))}</small>${over?' <span class="pill warn">Más que el stock</span>':''}</div>
-     <div class="steps">${p.upc>1?stepper('mv',p.id,'c',q.c,'cajas'):''}${stepper('mv',p.id,'u',q.u,'uds')}</div></div>`}):'<div class="empty">Ningún producto coincide.</div>'}</div></div>`}
-function sumText(n,tot){return n?`<b>${n} productos</b> · ${tot} unidades`:'<span class="muted">Marca cantidades para empezar</span>'}
+  dock(`<div class="sum" id="mvsum">${sumText(lines.length,tot)}</div><button class="btn sec" data-act="mv-clear" id="mv-clear" ${lines.length?'':'hidden'}>Vaciar</button><button class="btn primary" data-act="mv-review" id="mv-review" ${lines.length?'':'disabled'}>Revisar${ic('chev')}</button>`);
+  return `<div class="stack">${nameNote()}${readOnlyNote()}${typeSeg()}${dest}
+   ${searchBox('q-mv',m.q)}${catChips(m.cat,'cat-mv')}
+   <div class="list">${list.length?grouped(list,p=>{const q=m.items[p.id]||{},v=st[p.id]||0,tt=mvTotal(p.id),over=m.type==='salida'&&tt>v;
+     return `<div class="prow ${tt?'on':''}" id="row-${p.id}"><div class="pn"><b>${esc(p.name)}</b><small>${esc(p.format)} · en bodega ${esc(cu(v,p.upc))}</small>${over?' <span class="pill warn">Más que el stock</span>':''}</div>
+     <div class="steps">${p.upc>1?stepper('mv',p.id,'c',q.c,'cajas'):''}${stepper('mv',p.id,'u',q.u,'uds')}</div></div>`}):'<div class="empty">Ninguna bebida coincide.</div>'}</div></div>`}
+function sumText(n,tot){return n?`<b>${n} ${n===1?'producto':'productos'}</b><br><span class="muted">${tot} unidades</span>`:'<span class="muted">Marca las cantidades</span>'}
 
 /* --- Contar --- */
 function vContar(){
   const ps=products();if(!ps.length)return `<div class="stack"><h1>Conteo</h1>${noProducts()}</div>`;
   const id=S.day+'_'+S.cntKind,c=counts()[id];
-  const head=`<div class="stack"><h1>Conteo de bodega</h1>${readOnlyNote()}${dayChips(S.day,'cnt-day')}
+  const head=`<div class="stack"><div class="hello"><span class="eyebrow">Inventario de bodega</span><h1>Conteo de ${S.cntKind}</h1></div>${readOnlyNote()}${dayChips(S.day,'cnt-day')}
    <div class="seg" style="grid-template-columns:1fr 1fr"><button data-act="cnt-kind" data-kind="apertura" aria-pressed="${S.cntKind==='apertura'}">Apertura</button><button data-act="cnt-kind" data-kind="cierre" aria-pressed="${S.cntKind==='cierre'}">Cierre</button></div>`;
-  if(!c)return head+`<div class="card empty"><b>${S.cntKind==='apertura'?'Conteo de apertura':'Conteo de cierre'} · ${esc(fmtDay(S.day))}</b>
-    ${S.cntKind==='apertura'?'Cuenta la bodega antes de la primera salida del día.':'Cuenta la bodega cuando termina el servicio del día.'}
-    Los tres podéis contar a la vez: cada uno marca sus productos y todo se suma en el mismo conteo.<br><br>
+  if(!c)return head+`<div class="card empty"><div class="ic">${ic('contar')}</div><b>${esc(fmtDay(S.day,true))}</b>
+    <span>${S.cntKind==='apertura'?'Cuenta la bodega antes de la primera salida del día.':'Cuenta la bodega cuando termine el servicio del día.'} Podéis contar los tres a la vez: cada uno marca sus productos y todo va al mismo conteo.</span>
     <button class="btn primary" data-act="cnt-start" ${S.canWrite?'':'disabled'}>Empezar conteo</button></div></div>`;
   const closed=c.status==='closed',teo=stockAt(closed?c.closedAt:null,id).st,items=c.items||{};
   const list=filterP(S.q,S.cat);let done=0,difs=0;
   for(const p of ps){if(items[p.id]!=null)done++;if(items[p.id]!=null&&items[p.id]!==(teo[p.id]||0))difs++}
-  BAR.innerHTML=`<div class="sticky-bar"><div class="wrap"><div class="sum" id="cntsum">${cntSum(done,ps.length,difs)}</div>
-   ${closed?`<button class="btn" data-act="cnt-reopen" ${S.canWrite?'':'disabled'}>Reabrir</button>`:`<button class="btn primary" data-act="cnt-close" ${S.canWrite?'':'disabled'}>Cerrar conteo</button>`}</div></div>`;
-  return head+`${closed?`<div class="notice ok">Conteo cerrado a las ${fmtTime(c.closedAt)}${c.closedBy?' por '+esc(c.closedBy):''}. Es la nueva base del stock.</div>`:'<div class="small muted">Se guarda solo mientras cuentas. Los productos sin tocar cuentan como 0 al cerrar.</div>'}
-   <input id="q-stock" type="search" placeholder="Buscar producto" value="${esc(S.q)}">${catChips(S.cat,'cat-stock')}
+  dock(`<div class="sum" id="cntsum">${cntSum(done,ps.length,difs)}</div>${closed?`<button class="btn sec" data-act="cnt-reopen" ${S.canWrite?'':'disabled'}>Reabrir</button>`:`<button class="btn primary" data-act="cnt-close" ${S.canWrite?'':'disabled'}>${ic('check')}Cerrar conteo</button>`}`);
+  return head+`${closed?`<div class="notice ok">${ic('check')}<div>Cerrado a las <b>${fmtTime(c.closedAt)}</b>${c.closedBy?' por '+esc(c.closedBy):''}. Es la nueva base del stock.</div></div>`:'<div class="small muted">Se guarda solo mientras cuentas. Lo que no cuentes vale 0 al cerrar.</div>'}
+   ${searchBox('q-stock',S.q)}${catChips(S.cat,'cat-stock')}
    <div class="list">${grouped(list,p=>{const u=items[p.id],has=u!=null,t=teo[p.id]||0,upc=p.upc||1;
      const cc=has&&upc>1?Math.floor(u/upc):'',uu=has?(upc>1?u%upc:u):'';
-     return `<div class="prow"><div class="pn"><b>${esc(p.name)}</b><small>${esc(p.format)}</small></div>
+     return `<div class="prow ${has?'on':''}" id="row-${p.id}"><div class="pn"><b>${esc(p.name)}</b><small>${esc(p.format)}</small></div>
      ${closed?`<div class="qty">${esc(cu(u||0,upc))}</div>`:`<div class="steps">${upc>1?stepper('cnt',p.id,'c',cc,'cajas'):''}${stepper('cnt',p.id,'u',uu,'uds')}</div>`}
      <div class="diff" id="d-${p.id}">${diffText(has,u||0,t,upc)}</div></div>`})}</div></div>`}
-function diffText(has,u,t,upc){if(!has)return `<span class="muted">Teórico ${esc(cu(t,upc))} · sin contar</span>`;const d=u-t;
-  return `<span class="${d?'diff bad':'diff ok'}" style="flex-basis:auto">Teórico ${esc(cu(t,upc))} · ${d?'Diferencia '+(d>0?'+':'')+esc(cu(d,upc)):'Cuadra'}</span>`}
-function cntSum(done,n,difs){return `<b>${done}/${n}</b> contados${difs?` · <span style="color:var(--bad);font-weight:600">${difs} con diferencia</span>`:''}`}
+function diffText(has,u,t,upc){if(!has)return `<span class="muted">Debería haber ${esc(cu(t,upc))} · sin contar</span>`;const d=u-t;
+  return `<span class="muted">Debería haber ${esc(cu(t,upc))} · </span>${d?`<span class="bad">Diferencia ${d>0?'+':''}${esc(cu(d,upc))}</span>`:'<span class="ok">Cuadra ✓</span>'}`}
+function cntSum(done,n,difs){return `<b>${done} de ${n}</b> contados<br>${difs?`<span style="color:var(--bad-soft);font-weight:700">${difs} con diferencia</span>`:'<span class="muted">sin diferencias</span>'}`}
 
 /* --- Historial --- */
 function vHist(){
   const list=movs().filter(m=>dayKey(m.at)===S.day&&(!S.histType||m.type===S.histType));
-  return `<div class="stack"><h1>Historial</h1>${dayChips(S.day,'hist-day')}
+  return `<div class="stack">${backBtn()}<h1>Historial</h1>${dayChips(S.day,'hist-day')}
    <div class="chips"><button class="chip" data-act="hist-type" data-type="" aria-pressed="${!S.histType}">Todos</button>${Object.entries(TYPES).map(([k,t])=>`<button class="chip" data-act="hist-type" data-type="${k}" aria-pressed="${S.histType===k}">${t.label}</button>`).join('')}</div>
    ${list.length?`<div class="list">${list.map(m=>{const n=Object.keys(m.items||{}).length,tot=Object.values(m.items||{}).reduce((a,b)=>a+b,0),open=S.open===m.id;
-    return `<div class="mov ${m.voided?'void':''}" data-act="mov-open" data-id="${m.id}"><div class="top"><span class="num muted">${fmtTime(m.at)}</span><b>${esc(TYPES[m.type]?.long||m.type)}</b>
-     <span>${esc(m.type==='entrada'?(m.ref||''):m.zone||'')}</span>${m.pending?'<span class="pill warn">Sin enviar</span>':''}${m.voided?'<span class="pill bad">Anulado</span>':''}</div>
-     <div class="small muted">${n} productos · ${tot} u · ${esc(m.by||'—')}${m.receiver?' → '+esc(m.receiver):''}</div>
+    return `<div class="mov ${m.voided?'void':''}" data-act="mov-open" data-id="${m.id}"><div class="top"><span class="ti">${ic(m.type)}</span><div class="tx"><b>${esc(TYPES[m.type]?.long||m.type)}</b> · ${esc(m.type==='entrada'?(m.ref||'Bodega'):m.zone||'')}
+     <div class="small muted">${fmtTime(m.at)} · ${n} prod. · ${tot} u · ${esc(m.by||'—')}${m.receiver?' → '+esc(m.receiver):''}</div></div>${m.pending?'<span class="pill warn">Sin enviar</span>':''}${m.voided?'<span class="pill bad">Anulado</span>':''}</div>
      ${open?`<div class="detail" data-stop>${Object.entries(m.items||{}).map(([pid,v])=>{const p=P(pid);return `<div class="row small"><span style="flex:1">${esc(p?p.name:'(producto borrado)')}</span><b class="num">${esc(cu(v,p&&p.upc))}</b></div>`}).join('')}
       ${m.note?`<div class="small"><b>Nota:</b> ${esc(m.note)}</div>`:''}${m.voided?`<div class="small" style="color:var(--bad)"><b>Anulado:</b> ${esc(m.voidReason||'')} (${esc(m.voidBy||'')})</div>`:''}
-      <div class="row">${m.type==='salida'?`<button class="btn" data-act="vale" data-id="${m.id}">Vale PDF</button>`:''}
+      <div class="row">${m.type==='salida'?`<button class="btn" data-act="vale" data-id="${m.id}">${ic('pdf')}Vale PDF</button>`:''}
       ${!m.voided&&S.canWrite?(S.voiding===m.id?`<input id="void-reason" placeholder="Motivo de la anulación" style="flex:1 1 180px"><button class="btn danger" data-act="void-ok" data-id="${m.id}">Anular</button>`:`<button class="btn danger" data-act="void" data-id="${m.id}">Anular…</button>`):''}</div></div>`:''}</div>`}).join('')}</div>`
-   :'<div class="card empty"><b>Sin movimientos</b>No hay movimientos registrados este día.</div>'}
-   <p class="small muted">Nada se borra: un error se corrige anulando el movimiento (queda registrado quién y por qué) y registrándolo de nuevo.</p></div>`}
+   :`<div class="card empty"><div class="ic">${ic('historial')}</div><b>Sin movimientos</b><span>No hay movimientos registrados este día.</span></div>`}
+   <p class="small muted">Nada se borra: un error se corrige anulando el movimiento (queda quién y por qué) y registrándolo de nuevo.</p></div>`}
 
 /* --- Reportes --- */
 function vRep(){
   const D=S.repDay||S.day,R=dayReport(D);
-  const warn=!R.ciC?`<div class="notice">El conteo de cierre de este día no está cerrado: el reporte muestra el stock teórico sin comparar.</div>`:'';
-  return `<div class="stack"><h1>Reportes</h1>${dayChips(D,'rep-day')}${warn}
-   <div class="grid2"><button class="btn primary" data-act="pdf-day">PDF cierre del ${esc(fmtDay(D))}</button><button class="btn" data-act="pdf-event">PDF resumen del evento</button></div>
-   <h2>Cierre · ${esc(fmtDay(D,true))}</h2>
-   ${R.rows.length?`<div class="tablewrap"><table><thead><tr><th>Producto</th><th>Inicial</th><th>Entr.</th><th>Salid.</th><th>Dev.</th><th>Merma</th><th>Teórico</th><th>Contado</th><th>Dif.</th></tr></thead><tbody>
+  return `<div class="stack"><div class="hello"><span class="eyebrow">Para entregar</span><h1>Reportes</h1></div>${dayChips(D,'rep-day')}
+   ${!R.ciC?`<div class="notice">${ic('alert')}<div>El conteo de cierre de este día no está cerrado: el reporte muestra lo que debería haber, sin comparar con lo contado.</div></div>`:''}
+   <div class="grid2"><button class="btn primary" data-act="pdf-day">${ic('pdf')}Cierre del día (PDF)</button><button class="btn" data-act="pdf-event">${ic('pdf')}Resumen del evento</button></div>
+   <div class="sec"><h2>Cierre · ${esc(fmtDay(D,true))}</h2>
+   ${R.rows.length?`<div class="tablewrap"><table><thead><tr><th>Producto</th><th>Inicial</th><th>Entr.</th><th>Salid.</th><th>Dev.</th><th>Merma</th><th>Debería</th><th>Contado</th><th>Dif.</th></tr></thead><tbody>
    ${R.rows.map(r=>`<tr><td>${esc(r.p.name)}</td><td>${r.ini}</td><td>${r.ent}</td><td>${r.sal}</td><td>${r.dev}</td><td>${r.mer}</td><td>${r.teo}</td><td>${r.cont??'—'}</td><td class="${r.dif?'neg':''}">${r.dif==null?'—':(r.dif>0?'+':'')+r.dif}</td></tr>`).join('')}
-   </tbody></table></div><p class="small muted">Cantidades en unidades. Periodo: ${R.apC?'desde el conteo de apertura ('+fmtTime(R.ap.closedAt)+')':'desde las 00:00'} hasta ${R.ciC?'el conteo de cierre ('+fmtTime(R.ci.closedAt)+')':'las 24:00'}.</p>`:'<div class="card empty"><b>Sin datos</b>No hay stock ni movimientos para este día.</div>'}
-   <h2>Consumo por zona</h2>${zoneTable(R.zn)}
-   <h2>Copia de seguridad</h2><div class="card stack"><span class="small muted">Todos los movimientos del evento en un archivo que abre Excel.</span><button class="btn" data-act="csv">Exportar movimientos (CSV)</button></div></div>`}
+   </tbody></table></div><p class="small muted">En unidades. Periodo: ${R.apC?'desde el conteo de apertura ('+fmtTime(R.ap.closedAt)+')':'desde las 00:00'} hasta ${R.ciC?'el conteo de cierre ('+fmtTime(R.ci.closedAt)+')':'las 24:00'}.</p>`:`<div class="card empty"><b>Sin datos</b><span>No hay stock ni movimientos este día.</span></div>`}</div>
+   <div class="sec"><h2>Consumo por zona</h2>${zoneTable(R.zn)}</div>
+   <div class="sec"><h2>Copia de seguridad</h2><div class="card row" style="justify-content:space-between"><span class="small muted" style="flex:1 1 200px">Todos los movimientos del evento en un archivo que abre Excel.</span><button class="btn" data-act="csv">Exportar CSV</button></div></div></div>`}
 function zoneRows(zn){const out=[];for(const z of cfg().zones){const zz=zn[z];if(!zz)continue;let t=0;const items=[];
   for(const[pid,r]of Object.entries(zz)){const p=P(pid);const net=r.sal-r.dev;t+=net;items.push({p,...r,net})}out.push({z,t,items})}return out}
-function zoneTable(zn){const zs=zoneRows(zn);if(!zs.length)return '<div class="card empty">Sin salidas a zonas en este periodo.</div>';
-  return `<div class="tablewrap"><table><thead><tr><th>Zona / producto</th><th>Salidas</th><th>Devol.</th><th>Merma zona</th><th>Consumo</th></tr></thead><tbody>
+function zoneTable(zn){const zs=zoneRows(zn);if(!zs.length)return '<div class="card empty"><span>Sin salidas a zonas en este periodo.</span></div>';
+  return `<div class="tablewrap"><table><thead><tr><th>Zona / producto</th><th>Salidas</th><th>Devol.</th><th>Merma</th><th>Consumo</th></tr></thead><tbody>
   ${zs.map(z=>`<tr><td><b>${esc(z.z)}</b></td><td></td><td></td><td></td><td><b>${z.t}</b></td></tr>`+z.items.map(i=>`<tr><td class="muted">&nbsp;&nbsp;${esc(i.p?i.p.name:'?')}</td><td>${i.sal}</td><td>${i.dev}</td><td>${i.mer}</td><td>${i.net}</td></tr>`).join('')).join('')}</tbody></table></div>`}
+
+/* --- Más --- */
+function vMas(){const n=products(true).length,h=movs().filter(m=>dayKey(m.at)===todayKey()).length;
+  const it=(go,icn,t,s)=>`<button data-go="${go}"><span class="ti">${ic(icn)}</span><div><b>${t}</b><span>${s}</span></div><span class="chev">${ic('chev')}</span></button>`;
+  return `<div class="stack"><h1>Más</h1><div class="list menu">
+   ${it('historial','historial','Historial',h?h+' movimientos hoy':'Todos los movimientos, anular errores')}
+   ${it('productos','productos','Productos',n?n+' bebidas en el catálogo':'Catálogo vacío · añadir o importar')}
+   ${it('ajustes','ajustes','Ajustes','Tu nombre, zonas, días del evento')}</div>
+   <p class="small muted">Registrando como <b>${esc(S.me||'sin nombre')}</b>.</p></div>`}
 
 /* --- Productos --- */
 function vProd(){
   const all=products(true),e=S.editP;
   const form=e?`<div class="card stack"><h2>${e.id?'Editar producto':'Nuevo producto'}</h2>
-    <label class="f">Nombre<input id="p-name" value="${esc(e.name||'')}" placeholder="Ej. Mahou 5 Estrellas lata 33 cl"></label>
+    <label class="f">Nombre<input id="p-name" value="${esc(e.name||'')}" placeholder="Ej. Cerveza lata 33 cl"></label>
     <div class="grid2"><label class="f">Categoría<select id="p-cat">${CATS.map(c=>`<option ${e.cat===c?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
     <label class="f">Formato<input id="p-format" value="${esc(e.format||'')}" placeholder="Lata 33 cl"></label>
     <label class="f">Unidades por caja<input id="p-upc" inputmode="numeric" value="${e.upc??24}"></label>
@@ -399,42 +506,46 @@ function vProd(){
     <label class="f">Estado<select id="p-active"><option value="1" ${e.active!==false?'selected':''}>Activo</option><option value="0" ${e.active===false?'selected':''}>Oculto en listas</option></select></label></div>
     <div class="row"><button class="btn primary" data-act="p-save">Guardar</button><button class="btn" data-act="p-cancel">Cancelar</button>
     ${e.id&&!usedIds().has(e.id)?'<button class="btn danger" data-act="p-del">Eliminar</button>':''}</div></div>`:'';
-  const imp=S.importOpen?`<div class="card stack"><h2>Pegar lista desde Excel</h2><span class="small muted">Una línea por producto, columnas en este orden (separadas por tabulador, punto y coma o coma):<br><b>Nombre · Categoría · Formato · Uds por caja · Mínimo · Precio</b>. Solo el nombre es obligatorio.</span>
-    <textarea id="imp-text" placeholder="Mahou 5 Estrellas lata 33 cl;Cerveza;Lata 33 cl;24;72;0,60"></textarea>
+  const imp=S.importOpen?`<div class="card stack"><h2>Pegar lista desde Excel</h2><span class="small muted">Copia las filas en Excel y pégalas aquí. Columnas en este orden:<br><b>Nombre · Categoría · Formato · Uds por caja · Mínimo · Precio</b>. Solo el nombre es obligatorio.</span>
+    <textarea id="imp-text" placeholder="Cerveza lata 33 cl;Cerveza;Lata 33 cl;24;72;0,60"></textarea>
     <label class="f">O elegir un archivo CSV<input type="file" id="imp-file" accept=".csv,.txt,text/csv,text/plain"></label>
     <div class="row"><button class="btn primary" data-act="imp-go">Importar</button><button class="btn" data-act="imp-cancel">Cancelar</button></div></div>`:'';
   const hasSamples=all.some(p=>p.id.startsWith('ej-'));
-  return `<div class="stack"><h1>Productos</h1>${readOnlyNote()}${form}${imp}
-   ${!e&&!S.importOpen&&S.canWrite?`<div class="grid2"><button class="btn primary" data-act="p-new">Añadir producto</button><button class="btn" data-act="imp-open">Pegar lista de Excel</button></div>`:''}
-   ${all.length?`<div class="list">${grouped(all,p=>`<div class="prow" data-act="p-edit" data-id="${p.id}" style="cursor:pointer"><div class="pn"><b>${esc(p.name)}</b><small>${esc(p.format)} · caja de ${p.upc||1}${p.min?' · mín. '+p.min:''}${p.price?' · '+p.price+' €':''}</small></div>${p.active===false?'<span class="pill">Oculto</span>':''}${p.id.startsWith('ej-')?'<span class="pill warn">Ejemplo</span>':''}${p.pending?'<span class="pill warn">Sin enviar</span>':''}</div>`)}</div>`
-    :`<div class="card empty"><b>Catálogo vacío</b>Cuando te pasen la lista de bebidas, pégala desde Excel. Mientras, puedes cargar 10 productos de ejemplo para practicar.</div>`}
+  return `<div class="stack">${backBtn()}<h1>Productos</h1>${readOnlyNote()}${form}${imp}
+   ${!e&&!S.importOpen&&S.canWrite?`<div class="grid2"><button class="btn primary" data-act="p-new">${ic('plus')}Añadir producto</button><button class="btn" data-act="imp-open">Pegar lista de Excel</button></div>`:''}
+   ${all.length?`<div class="list">${grouped(all,p=>`<div class="prow" data-act="p-edit" data-id="${p.id}" style="cursor:pointer"><div class="pn"><b>${esc(p.name)}</b><small>${esc(p.format)} · caja de ${p.upc||1}${p.min?' · mín. '+p.min:''}${p.price?' · '+p.price+' €':''}</small></div><div class="row" style="justify-content:flex-end">${p.active===false?'<span class="pill">Oculto</span>':''}${p.id.startsWith('ej-')?'<span class="pill warn">Ejemplo</span>':''}${p.pending?'<span class="pill warn">Sin enviar</span>':''}${ic('chev')}</div></div>`)}</div>`
+    :`<div class="card empty"><div class="ic">${ic('productos')}</div><b>Catálogo vacío</b><span>Cuando te pasen la lista de bebidas, pégala desde Excel. Mientras, carga 10 productos de ejemplo para practicar.</span></div>`}
    ${S.canWrite?(hasSamples?'<button class="btn danger" data-act="samples-del">Quitar productos de ejemplo sin movimientos</button>':'<button class="btn" data-act="samples">Cargar productos de ejemplo</button>'):''}</div>`}
 function usedIds(){const s=new Set();for(const m of movs())for(const k of Object.keys(m.items||{}))s.add(k);for(const c of Object.values(counts()))for(const k of Object.keys(c.items||{}))s.add(k);return s}
 
 /* --- Ajustes --- */
 function vAjustes(){const c=cfg();
-  return `<div class="stack"><h1>Ajustes</h1>
-  <div class="card stack"><h2>Tu nombre en este móvil</h2><div class="row"><input id="me-in" value="${esc(S.me)}" placeholder="Nombre y apellido" style="flex:1"><button class="btn primary" data-act="save-me">Guardar</button></div></div>
+  return `<div class="stack">${backBtn()}<h1>Ajustes</h1>
+  <div class="card stack"><h2>Tu nombre en este móvil</h2><div class="row"><input id="me-in" value="${esc(S.me)}" placeholder="Nombre y apellido" style="flex:1 1 180px"><button class="btn primary" data-act="save-me">Guardar</button></div></div>
   <div class="card stack"><h2>Evento</h2>
    <div class="grid2"><label class="f">Evento<input id="c-event" value="${esc(c.event)}"></label><label class="f">Recinto<input id="c-venue" value="${esc(c.venue)}"></label>
    <label class="f">Catering<input id="c-caterer" value="${esc(c.caterer)}"></label><label class="f">Días (AAAA-MM-DD, separados por coma)<input id="c-days" value="${esc(c.days.join(', '))}"></label></div>
-   <label class="f">Zonas de restauración (una por línea)<textarea id="c-zones" style="min-height:200px">${esc(c.zones.join('\n'))}</textarea></label>
+   <label class="f">Zonas (una por línea)<textarea id="c-zones" style="min-height:220px">${esc(c.zones.join('\n'))}</textarea></label>
    <button class="btn primary" data-act="cfg-save" ${S.canWrite?'':'disabled'}>Guardar evento</button></div>
-  ${S.isOwner?`<div class="card stack"><h2>Empezar de cero</h2><span class="small">Borra todos los movimientos y conteos (por ejemplo, después de practicar). Los productos y zonas se quedan.</span>
+  ${S.isOwner?`<div class="card stack"><h2>Empezar de cero</h2><span class="small">Borra todos los movimientos y conteos (por ejemplo, después de practicar). Los productos y las zonas se quedan.</span>
    ${S.wipe?`<label class="f">Escribe BORRAR para confirmar<input id="wipe-in" autocomplete="off"></label><div class="row"><button class="btn danger" data-act="wipe-ok">Borrar movimientos y conteos</button><button class="btn" data-act="wipe-cancel">Cancelar</button></div>`:'<button class="btn danger" data-act="wipe">Borrar datos de prueba…</button>'}</div>`:''}
-  <p class="small muted">Los datos se guardan en la nube y se comparten con quien tenga acceso a esta app. Si se va la cobertura, cada móvil guarda los cambios y los envía al volver la conexión.</p></div>`}
+  <p class="small muted">Los datos se guardan en la nube y los ve todo el que tenga acceso a esta app. Si se va la cobertura, cada móvil guarda los cambios y los envía al volver la conexión.</p></div>`}
 
 /* ---------- acciones ---------- */
-function go(tab){S.tab=tab;S.open=null;S.voiding=null;if(location.hash!=='#'+tab)history.replaceState(null,'','#'+tab);render();window.scrollTo(0,0)}
+const TABNAMES=['inicio','mover','contar','reportes','mas','historial','productos','ajustes'];
+function go(tab){if(!TABNAMES.includes(tab))tab='inicio';S.tab=tab;S.open=null;S.voiding=null;if(location.hash!=='#'+tab)history.replaceState(null,'','#'+tab);render();window.scrollTo(0,0)}
 window.addEventListener('hashchange',()=>{const t=location.hash.slice(1);if(t&&t!==S.tab)go(t)});
 document.addEventListener('click',e=>{
-  const g=e.target.closest('[data-go]');if(g){e.preventDefault();go(g.dataset.go);return}
+  const g=e.target.closest('[data-go]');if(g){e.preventDefault();if(g.dataset.go==='mover'&&S.tab!=='mover'&&S.lastSaved)S.lastSaved=null;go(g.dataset.go);return}
   if(e.target.closest('[data-stop]')&&!e.target.closest('button'))return;
   const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,d=b.dataset;
   const A={
     'save-me'(){const v=(document.getElementById('me-in').value||'').trim();if(!v)return toast('Escribe tu nombre');S.me=v;LS.set('mhw-me',v);toast('Guardado');render()},
     'cat-stock'(){S.cat=d.cat;render()},'cat-mv'(){S.mv.cat=d.cat;render()},
+    start(){if(S.mv.type!==d.type){S.mv.type=d.type;S.mv.zone=''}S.mv.step='items';S.lastSaved=null;saveMv();go('mover')},
+    'goto-count'(){S.day=todayKey();S.cntKind=d.kind;go('contar')},
     'mv-type'(){S.mv.type=d.type;S.mv.zone='';saveMv();render()},
+    'mv-zone'(){S.mv.zone=d.zone;saveMv();render();window.scrollTo(0,0)},'mv-zone-clear'(){S.mv.zone='';saveMv();render()},
     inc(){bump(d,1)},dec(){bump(d,-1)},
     'mv-clear'(){S.mv.items={};saveMv();render()},
     'mv-review'(){const m=S.mv;if(m.type!=='entrada'&&!m.zone)return toast('Elige la zona');S.mv.step='confirm';render();window.scrollTo(0,0)},
@@ -474,19 +585,20 @@ document.addEventListener('input',e=>{const t=e.target;
   if(t.id==='q-mv'){S.mv.q=t.value;softList();return}
   if(t.id==='mv-ref'){S.mv.ref=t.value;saveMv()}else if(t.id==='mv-note'){S.mv.note=t.value;saveMv()}else if(t.id==='mv-rec'){S.mv.receiver=t.value;saveMv()}
   if(t.dataset.qty!=null)setQty(t.dataset,parseInt(t.value,10))});
-document.addEventListener('change',e=>{if(e.target.id==='mv-zone'){S.mv.zone=e.target.value;saveMv()}});
 document.addEventListener('focusin',e=>{if(e.target.dataset&&e.target.dataset.qty!=null)e.target.select()});
 function softList(){const id=document.activeElement&&document.activeElement.id;render();const el=id&&document.getElementById(id);if(el){el.focus();const n=el.value.length;try{el.setSelectionRange(n,n)}catch(_){}}}
 
 function bump(d,delta){const el=document.getElementById(d.ctx+'-'+d.f+'-'+d.pid);const v=Math.max(0,(parseInt(el.value,10)||0)+delta);el.value=v||'';setQty(d,v)}
-function setQty(d,v){v=isNaN(v)?0:Math.max(0,v);const p=P(d.pid);if(!p)return;
+function setQty(d,v){v=isNaN(v)?0:Math.max(0,v);const p=P(d.pid);if(!p)return;const row=document.getElementById('row-'+d.pid);
   if(d.ctx==='mv'){const q=S.mv.items[d.pid]||(S.mv.items[d.pid]={c:0,u:0});q[d.f]=v;saveMv();
     const lines=mvLines(),tot=lines.reduce((a,pid)=>a+mvTotal(pid),0);const s=document.getElementById('mvsum');if(s)s.innerHTML=sumText(lines.length,tot);
-    const rb=document.querySelector('[data-act="mv-review"]');if(rb)rb.disabled=!lines.length;return}
+    if(row)row.classList.toggle('on',mvTotal(d.pid)>0);
+    const cb=document.getElementById('mv-clear');if(cb)cb.hidden=!lines.length;
+    const rb=document.getElementById('mv-review');if(rb)rb.disabled=!lines.length;return}
   if(!S.canWrite)return;
   const upc=p.upc||1,cEl=document.getElementById('cnt-c-'+d.pid),uEl=document.getElementById('cnt-u-'+d.pid);
   const units=(upc>1&&cEl?(parseInt(cEl.value,10)||0)*upc:0)+((uEl&&parseInt(uEl.value,10))||0);
-  const id=S.day+'_'+S.cntKind;enqueue('counts/'+id,'update',{items:{[d.pid]:units}});
+  const id=S.day+'_'+S.cntKind;enqueue('counts/'+id,'update',{items:{[d.pid]:units}});if(row)row.classList.add('on');
   const c=counts()[id],teo=stockAt(null,id).st;const dEl=document.getElementById('d-'+d.pid);if(dEl)dEl.innerHTML=diffText(true,units,teo[d.pid]||0,upc);
   const ps=products(),items=c.items||{};let done=0,difs=0;for(const q of ps){if(items[q.id]!=null)done++;if(items[q.id]!=null&&items[q.id]!==(teo[q.id]||0))difs++}
   const s=document.getElementById('cntsum');if(s)s.innerHTML=cntSum(done,ps.length,difs)}
@@ -585,7 +697,7 @@ function exportCsv(){const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"';const r
   saveFile('Movimientos bodega '+todayKey()+'.csv','﻿'+rows.join('\r\n'))}
 
 /* ---------- arranque ---------- */
-{const t=location.hash.slice(1);if(['stock','mover','contar','historial','reportes','productos','ajustes'].includes(t))S.tab=t}
+{const t=location.hash.slice(1);if(TABNAMES.includes(t))S.tab=t}
 render();
 (async function init(){
   if(!window.claude||!window.claude.use){setOnline('local');return}
