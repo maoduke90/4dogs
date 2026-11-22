@@ -189,7 +189,7 @@ canvas.sig{width:100%;height:170px;background:#fbfbf8;border:1.5px dashed var(--
 <script>
 "use strict";
 /* ---------- constantes ---------- */
-const CATS=['Agua','Refresco','Cerveza','Vino blanco','Vino tinto','Rosado','Cava / Champán','Destilado','Zumo','Café / otros'];
+const CATS=['Agua','Refresco','Cerveza','Vino blanco','Vino tinto','Rosado','Cava / Champán','Destilado','Licor','Vermut / aperitivo','Zumo','Café / otros'];
 const DEFAULT_CFG={event:'Madrid Horse Week',venue:'IFEMA Madrid',caterer:'Zalacaín',
   days:['2026-11-26','2026-11-27','2026-11-28','2026-11-29'],
   zones:[...Array.from({length:13},(_,i)=>'Palco '+(i+1)),'Restaurante']};
@@ -543,7 +543,7 @@ function vProd(){
   const hasSamples=all.some(p=>p.id.startsWith('ej-'));
   return `<div class="stack">${backBtn()}<h1>Productos</h1>${readOnlyNote()}${form}${imp}
    ${!e&&!S.importOpen&&S.canWrite?`<div class="grid2"><button class="btn primary" data-act="p-new">${ic('plus')}Añadir producto</button><button class="btn" data-act="imp-open">Pegar lista de Excel</button></div>`:''}
-   ${all.length?`<div class="list">${grouped(all,p=>`<div class="prow" data-act="p-edit" data-id="${p.id}" style="cursor:pointer"><div class="pn"><b>${esc(p.name)}</b><small>${esc(p.format)} · caja de ${p.upc||1}${p.min?' · mín. '+p.min:''}${p.price?' · '+p.price+' €':''}</small></div><div class="row" style="justify-content:flex-end">${p.active===false?'<span class="pill">Oculto</span>':''}${p.id.startsWith('ej-')?'<span class="pill warn">Ejemplo</span>':''}${p.pending?'<span class="pill warn">Sin enviar</span>':''}${ic('chev')}</div></div>`)}</div>`
+   ${all.length?`<div class="list">${grouped(all,p=>`<div class="prow" data-act="p-edit" data-id="${p.id}" style="cursor:pointer"><div class="pn"><b>${esc(p.name)}</b><small>${esc(p.format)} · caja de ${p.upc||1}${p.planned?' · previsto '+esc(cu(p.planned,p.upc)):''}${p.min?' · mín. '+p.min:''}${p.price?' · '+p.price+' €':''}</small></div><div class="row" style="justify-content:flex-end">${p.active===false?'<span class="pill">Oculto</span>':''}${p.id.startsWith('ej-')?'<span class="pill warn">Ejemplo</span>':''}${p.pending?'<span class="pill warn">Sin enviar</span>':''}${ic('chev')}</div></div>`)}</div>`
     :`<div class="card empty"><div class="ic">${ic('productos')}</div><b>Catálogo vacío</b><span>Cuando te pasen la lista de bebidas, pégala desde Excel. Mientras, carga 10 productos de ejemplo para practicar.</span></div>`}
    ${S.canWrite?(hasSamples?'<button class="btn danger" data-act="samples-del">Quitar productos de ejemplo sin movimientos</button>':'<button class="btn" data-act="samples">Cargar productos de ejemplo</button>'):''}</div>`}
 function usedIds(){const s=new Set();for(const m of movs())for(const k of Object.keys(m.items||{}))s.add(k);for(const c of Object.values(counts()))for(const k of Object.keys(c.items||{}))s.add(k);return s}
