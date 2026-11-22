@@ -338,7 +338,7 @@ async function flush(){
 window.addEventListener('online',()=>scheduleFlush(100));
 
 /* ---------- servidor (Supabase) con PIN de equipo ---------- */
-const SB={url:'https://pzsckxkczhhkxzpjuvjo.supabase.co',key:'sb_publishable_hL9vm16yHjVoxuC8eN9eoQ_uDFu5emk'};
+const SB={url:'https://mtvhcbhdagnbuqvdajpr.supabase.co',key:'sb_publishable_Rjw47MuQa41RvotWkOx7ag_s7cRrFFp'};
 S.pin=LS.get('mhw-pin','');S.role=LS.get('mhw-role','');S.isOwner=S.role==='admin';S.authError='';
 async function rpc(fn,args,ms){const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),ms||15000);
   try{const r=await fetch(SB.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json'},body:JSON.stringify(args),signal:ctl.signal,cache:'no-store'});
@@ -350,7 +350,7 @@ function makeDb(){
   const snapCol=c=>{const docs=Object.keys(store).filter(p=>p.split('/')[0]===c).map(p=>{const d=store[p];return{id:p.split('/')[1],exists:true,data:()=>d}});return{docs,size:docs.length,empty:!docs.length,metadata:{fromCache:false,hasPendingWrites:false}}};
   const emit=()=>{for(const x of colSubs)x.next(snapCol(x.c));for(const x of docSubs){const d=store[x.p];x.next({id:x.p.split('/')[1],exists:d!==undefined,data:()=>d,metadata:{fromCache:false,hasPendingWrites:false}})}};
   async function poll(){if(busy||!S.pin)return;busy=true;
-    try{const r=await rpc('api_changes',{p_pin:S.pin,p_since:since});
+    try{const r=await rpc('bodega_api_changes',{p_pin:S.pin,p_since:since});
       if(!r.ok){if(r.error==='pin')authFail('pin');else setOnline('offline');return}
       if(r.role&&r.role!==S.role){S.role=r.role;LS.set('mhw-role',r.role);S.isOwner=r.role==='admin'}
       if(r.full)for(const k of Object.keys(store))delete store[k];
@@ -361,7 +361,7 @@ function makeDb(){
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){poll();loop()}});
   window.addEventListener('online',()=>{poll()});
   async function write(path,op,data){
-    const r=await rpc('api_write',{p_pin:S.pin,p_op:op,p_path:path,p_data:data});
+    const r=await rpc('bodega_api_write',{p_pin:S.pin,p_op:op,p_path:path,p_data:data});
     if(!r.ok){if(r.error==='pin'){authFail('pin');throw{code:'unauthenticated'}}if(r.error==='locked')throw{code:'unavailable'};throw{code:r.error==='forbidden'?'invalid_argument':(r.error||'unavailable')}}
     if(op==='delete')delete store[path];else if(op==='set')store[path]=data;else store[path]=deepMerge(store[path],data);emit()}
   setTimeout(()=>{poll();loop()},0);
@@ -414,7 +414,7 @@ function vLogin(){return `<div class="stack" style="max-width:420px;margin:6vh a
   <span class="small muted">La primera vez necesitas cobertura. Después la app funciona también sin conexión.</span></div></div>`}
 async function doLogin(){const pin=(document.getElementById('pin-in').value||'').trim();if(!pin)return toast('Escribe el PIN');
   const b=document.getElementById('login-btn');b.disabled=true;b.textContent='Comprobando…';
-  try{const r=await rpc('api_login',{p_pin:pin},12000);
+  try{const r=await rpc('bodega_api_login',{p_pin:pin},12000);
     if(r.ok){S.pin=pin;S.role=r.role;S.isOwner=r.role==='admin';S.authError='';LS.set('mhw-pin',pin);LS.set('mhw-role',r.role);start();go(S.tab||'inicio');toast(r.role==='admin'?'Entraste como responsable':'Bienvenido');return}
     S.authError=r.error==='locked'?'Demasiados intentos fallidos. Espera 15 minutos y vuelve a probar.':'PIN incorrecto.'}
   catch(e){S.authError='No hay conexión. Para entrar la primera vez necesitas cobertura.'}
@@ -671,7 +671,7 @@ document.addEventListener('click',e=>{
     'cfg-save':saveCfg,'retry-failed':retryFailed,
     logout(){if(S.outbox.length)return toast('Hay '+S.outbox.length+' cambios sin enviar. Espera a ver «Al día» antes de salir.');S.pin='';S.role='';S.isOwner=false;LS.del('mhw-pin');LS.del('mhw-role');S.authError='';render()},
     async 'set-pin'(){const v=(document.getElementById('newpin-in').value||'').trim();if(!/^[0-9]{6,12}$/.test(v))return toast('El PIN debe tener de 6 a 12 cifras');
-      try{const r=await rpc('api_set_pin',{p_pin:S.pin,p_role:'team',p_new:v});toast(r.ok?'PIN del equipo cambiado':'No se pudo cambiar el PIN')}catch(e){toast('Sin conexión: inténtalo con cobertura')}},
+      try{const r=await rpc('bodega_api_set_pin',{p_pin:S.pin,p_role:'team',p_new:v});toast(r.ok?'PIN del equipo cambiado':'No se pudo cambiar el PIN')}catch(e){toast('Sin conexión: inténtalo con cobertura')}},
     backup(){saveFile('Copia bodega '+(S.me||'movil').replace(/[^\w ]/g,'')+' '+todayKey()+'.json',JSON.stringify({exportedAt:new Date().toISOString(),by:S.me,pending:S.outbox.map(({inflight,key,...r})=>r),notAccepted:S.failed.map(({key,...r})=>r),log:LS.get('mhw-log',[])},null,1))},
     wipe(){S.wipe=true;render()},'wipe-cancel'(){S.wipe=false;render()},
     'wipe-ok'(){if((document.getElementById('wipe-in').value||'').trim().toUpperCase()!=='BORRAR')return toast('Escribe BORRAR para confirmar');
