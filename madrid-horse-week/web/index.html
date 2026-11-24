@@ -422,6 +422,8 @@ async function doLogin(){const pin=(document.getElementById('pin-in').value||'')
   render()}
 document.addEventListener('submit',e=>{if(e.target.id==='login-form'){e.preventDefault();doLogin()}});
 function render(){
+  /* El PIN de responsable lo usa una sola persona: su nombre se guarda en la nube y no se vuelve a pedir. */
+  if(S.pin&&S.isOwner){const an=cfg().adminName;if(an&&S.me!==an&&!S.meTyped){S.me=an;LS.set('mhw-me',an)}}
   const navEl=document.querySelector('nav.tabs');if(navEl)navEl.hidden=!S.pin;document.getElementById('conn').hidden=!S.pin;
   if(!S.pin){BAR.innerHTML='';V.innerHTML=vLogin();paintConn();return}
   const c=cfg();document.getElementById('evname').textContent=c.event;document.getElementById('evsub').textContent='Bodega · '+c.venue;
@@ -638,7 +640,7 @@ document.addEventListener('click',e=>{
   if(e.target.closest('[data-stop]')&&!e.target.closest('button'))return;
   const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,d=b.dataset;
   const A={
-    'save-me'(){const v=(document.getElementById('me-in').value||'').trim();if(!v)return toast('Escribe tu nombre');S.me=v;LS.set('mhw-me',v);toast('Guardado');render()},
+    'save-me'(){const v=(document.getElementById('me-in').value||'').trim();if(!v)return toast('Escribe tu nombre');S.me=v;S.meTyped=true;LS.set('mhw-me',v);if(S.isOwner&&cfg().adminName!==v){S.cfg={...cfg(),adminName:v};enqueue('config/event','update',{adminName:v})}toast('Guardado');render()},
     'cat-stock'(){S.cat=d.cat;render()},'cat-mv'(){S.mv.cat=d.cat;render()},
     start(){if(S.mv.type!==d.type){S.mv.type=d.type;S.mv.zone=''}S.mv.step='items';S.lastSaved=null;saveMv();go('mover')},
     'goto-count'(){S.day=todayKey();S.cntKind=d.kind;go('contar')},
@@ -733,7 +735,7 @@ function matchCat(s){s=s.toLowerCase();const r=[['agua','Agua'],['cerve','Cervez
 function saveCfg(){const days=document.getElementById('c-days').value.split(/[,\s]+/).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x));
   const zones=document.getElementById('c-zones').value.split(/\n/).map(z=>z.trim()).filter(Boolean);
   if(!days.length)return toast('Revisa los días: formato 2026-11-26');if(!zones.length)return toast('Añade al menos una zona');
-  enqueue('config/event','set',{event:document.getElementById('c-event').value.trim()||DEFAULT_CFG.event,venue:document.getElementById('c-venue').value.trim(),caterer:document.getElementById('c-caterer').value.trim(),days,zones});
+  enqueue('config/event','set',{event:document.getElementById('c-event').value.trim()||DEFAULT_CFG.event,venue:document.getElementById('c-venue').value.trim(),caterer:document.getElementById('c-caterer').value.trim(),days,zones,...(cfg().adminName?{adminName:cfg().adminName}:{})});
   S.cfg={...cfg(),days,zones};toast('Evento guardado')}
 
 /* ---------- firma ---------- */
