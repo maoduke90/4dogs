@@ -118,6 +118,7 @@ textarea{min-height:90px;resize:vertical}
 .zone{appearance:none;cursor:pointer;font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:76px;justify-content:center}
 .zone b{font:700 1.5rem var(--display);line-height:1.1}.zone span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .zone em{font-style:normal;font-size:.68rem;color:var(--gold);font-weight:600}
+.zone.named{grid-column:span 2;min-height:72px;text-align:center;padding:10px 8px}.zone.named b{font-size:.95rem;letter-spacing:.04em;text-transform:uppercase;line-height:1.2}
 .zone.wide{grid-column:1/-1;flex-direction:row;gap:12px;min-height:60px}.zone.wide b{font-size:1rem;letter-spacing:.08em;text-transform:uppercase}
 .dest{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--accent-soft);color:var(--fg)}
 .dest b{font:700 1.1rem var(--display)}
@@ -205,7 +206,7 @@ canvas.sig{width:100%;height:170px;background:#fbfbf8;border:1.5px dashed var(--
 const CATS=['Agua','Refresco','Cerveza','Vino blanco','Vino tinto','Rosado','Cava / Champán','Destilado','Licor','Vermut / aperitivo','Zumo','Café / otros'];
 const DEFAULT_CFG={event:'Madrid Horse Week',venue:'IFEMA Madrid',caterer:'Zalacaín',
   days:['2026-11-26','2026-11-27','2026-11-28','2026-11-29'],
-  zones:[...Array.from({length:13},(_,i)=>'Palco '+(i+1)),'Restaurante']};
+  zones:['AON','IFEMA','Longines','Uzalacain','Porsche','Com Madrid','UAX','Cervezas Victoria','Palco MMHW','Grupo Mutua','Grupo Eulen','Air Europa','Gilmar','Restaurante']};
 const TYPES={entrada:{label:'Entrada',long:'Entrada de proveedor'},salida:{label:'Salida',long:'Salida a zona'},
   devolucion:{label:'Devolución',long:'Devolución de zona'},merma:{label:'Merma',long:'Merma / rotura'}};
 const BODEGA='Bodega';
@@ -489,8 +490,9 @@ function zoneGrid(){const m=S.mv,zones=m.type==='merma'?[BODEGA,...cfg().zones]:
   const hoy={};for(const x of activeMovs())if(x.type==='salida'&&dayKey(x.at)===t)hoy[x.zone]=(hoy[x.zone]||0)+1;
   const q=m.type==='salida'?'¿A qué zona va?':m.type==='devolucion'?'¿Qué zona devuelve?':'¿Dónde se produjo?';
   return `<h1>${q}</h1><div class="zones">${zones.map(z=>{const mm=/^Palco\s+(\S+)$/i.exec(z);
-    return mm?`<button class="zone" data-act="mv-zone" data-zone="${esc(z)}"><span>Palco</span><b>${esc(mm[1])}</b>${hoy[z]?`<em>${hoy[z]} hoy</em>`:''}</button>`
-      :`<button class="zone wide" data-act="mv-zone" data-zone="${esc(z)}"><b>${esc(z)}</b>${hoy[z]?`<em>${hoy[z]} entregas hoy</em>`:''}</button>`}).join('')}</div>`}
+    if(mm&&/^\d+$/.test(mm[1]))return `<button class="zone" data-act="mv-zone" data-zone="${esc(z)}"><span>Palco</span><b>${esc(mm[1])}</b>${hoy[z]?`<em>${hoy[z]} hoy</em>`:''}</button>`;
+    if(z!=='Restaurante'&&z!==BODEGA)return `<button class="zone named" data-act="mv-zone" data-zone="${esc(z)}"><span>Palco</span><b>${esc(z.replace(/^Palco\s+/i,''))}</b>${hoy[z]?`<em>${hoy[z]} hoy</em>`:''}</button>`;
+    return `<button class="zone wide" data-act="mv-zone" data-zone="${esc(z)}"><b>${esc(z)}</b>${hoy[z]?`<em>${hoy[z]} entregas hoy</em>`:''}</button>`}).join('')}</div>`}
 function vMover(){
   const m=S.mv,ps=products();
   if(S.lastSaved){const L=S.lastSaved;return `<div class="card done"><div class="ic">${ic('check')}</div><h1>${esc(TYPES[L.type].long)} registrada</h1>
