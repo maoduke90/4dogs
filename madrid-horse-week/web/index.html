@@ -424,6 +424,7 @@ document.addEventListener('submit',e=>{if(e.target.id==='login-form'){e.preventD
 function render(){
   /* El PIN de responsable lo usa una sola persona: su nombre se guarda en la nube y no se vuelve a pedir. */
   if(S.pin&&S.isOwner){const an=cfg().adminName;if(an&&S.me!==an&&!S.meTyped){S.me=an;LS.set('mhw-me',an)}}
+  if(S.pin&&!S.isOwner&&!S.me){const tn=cfg().teamName;if(tn){S.me=tn;LS.set('mhw-me',tn)}}
   const navEl=document.querySelector('nav.tabs');if(navEl)navEl.hidden=!S.pin;document.getElementById('conn').hidden=!S.pin;
   if(!S.pin){BAR.innerHTML='';V.innerHTML=vLogin();paintConn();return}
   const c=cfg();document.getElementById('evname').textContent=c.event;document.getElementById('evsub').textContent='Bodega · '+c.venue;
