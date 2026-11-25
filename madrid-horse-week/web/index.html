@@ -765,11 +765,11 @@ function signLines(doc,y,labels){const W=doc.internal.pageSize.getWidth(),w=(W-2
   if(y>doc.internal.pageSize.getHeight()-30){doc.addPage();y=30}doc.setFontSize(9);labels.forEach((l,i)=>{const x=12+i*(w+10);doc.line(x,y+15,x+w,y+15);doc.text(l,x,y+20)})}
 function pdfDay(D){const R=dayReport(D),doc=newPdf('Inventario de cierre diario',fmtDay(D,true),true);if(!doc)return;
   doc.setFontSize(9);doc.text(`Periodo: ${R.apC?'conteo de apertura '+fmtTime(R.ap.closedAt):'00:00'} – ${R.ciC?'conteo de cierre '+fmtTime(R.ci.closedAt)+(R.ci.closedBy?' ('+R.ci.closedBy+')':''):'24:00 (cierre sin contar)'}. Cantidades en unidades.`,12,29);
-  let val=0;const body=R.rows.map(r=>{if(r.p.price&&r.cont!=null)val+=r.dif*r.p.price;return[r.p.name,r.p.format||'',r.p.upc||1,r.ini,r.ent,r.sal,r.dev,r.mer,r.teo,r.cont??'-',r.dif==null?'-':(r.dif>0?'+':'')+r.dif]});
+  const body=R.rows.map(r=>{return[r.p.name,r.p.format||'',r.p.upc||1,r.ini,r.ent,r.sal,r.dev,r.mer,r.teo,r.cont??'-',r.dif==null?'-':(r.dif>0?'+':'')+r.dif]});
   doc.autoTable({...TBL,startY:33,head:[['Producto','Formato','Uds/caja','Inicial','Entradas','Salidas','Devol.','Mermas','Teórico','Contado','Diferencia']],body:body.length?body:[['Sin datos','','','','','','','','','','']],
     columnStyles:{2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right'},8:{halign:'right'},9:{halign:'right',fontStyle:'bold'},10:{halign:'right',fontStyle:'bold'}},
     didParseCell:h=>{if(h.section==='body'&&h.column.index===10&&/^[+-]\d/.test(String(h.cell.raw)))h.cell.styles.textColor=[179,38,30]}});
-  let y=doc.lastAutoTable.finalY+6;if(val){doc.setFontSize(9);doc.text('Valor de las diferencias a precio de coste: '+val.toFixed(2).replace('.',',')+' EUR',12,y);y+=4}
+  let y=doc.lastAutoTable.finalY+6;
   y=zonePdf(doc,R.zn,y+2,'Consumo por zona');signLines(doc,y+4,['Responsable de bodega','Revisado por'])
   ;saveFile(`Cierre bodega ${D}.pdf`,doc.output('blob'))}
 function zonePdf(doc,zn,y,title){const zs=zoneRows(zn);doc.setFont('helvetica','bold');doc.setFontSize(11);if(y>doc.internal.pageSize.getHeight()-30){doc.addPage();y=20}doc.text(title,12,y+4);doc.setFont('helvetica','normal');
@@ -778,17 +778,16 @@ function zonePdf(doc,zn,y,title){const zs=zoneRows(zn);doc.setFont('helvetica','
   doc.autoTable({...TBL,startY:y+7,head:[['Zona / producto','Salidas','Devoluciones','Merma en zona','Consumo neto']],body:body.length?body:[['Sin salidas a zonas','','','','']],columnStyles:{1:{halign:'right'},2:{halign:'right'},3:{halign:'right'},4:{halign:'right'}}});
   return doc.lastAutoTable.finalY+6}
 function pdfEvent(){const c=cfg(),days=[...c.days].sort(),doc=newPdf('Resumen del evento',fmtDay(days[0])+' – '+fmtDay(days[days.length-1]),true);if(!doc)return;
-  const f=flows(null,null),{st,base}=stockAt(null);let tv=0;
-  const body=products(true).map(p=>{const r=f.pr[p.id]||{ent:0,sal:0,dev:0,mer:0,merZ:0},net=r.sal-r.dev,v=p.price?net*p.price:null;if(v)tv+=v;
-    return(r.ent||r.sal||r.dev||r.mer||st[p.id])?[p.name,p.format||'',r.ent,r.sal,r.dev,r.mer+r.merZ,net,st[p.id]||0,p.price!=null?p.price.toFixed(2).replace('.',','):'-',v!=null?v.toFixed(2).replace('.',','):'-']:null}).filter(Boolean);
+  const f=flows(null,null),{st,base}=stockAt(null);
+  const body=products(true).map(p=>{const r=f.pr[p.id]||{ent:0,sal:0,dev:0,mer:0,merZ:0},net=r.sal-r.dev;
+    return(r.ent||r.sal||r.dev||r.mer||st[p.id])?[p.name,p.format||'',r.ent,r.sal,r.dev,r.mer+r.merZ,net,st[p.id]||0]:null}).filter(Boolean);
   doc.setFontSize(9);doc.text(`Stock final: ${base?'último conteo '+fmtDay(dayKey(base.closedAt))+' '+fmtTime(base.closedAt)+' más movimientos posteriores':'teórico (no hay conteos cerrados)'}. Consumo neto = salidas - devoluciones.`,12,29);
-  doc.autoTable({...TBL,startY:33,head:[['Producto','Formato','Entradas','Salidas','Devol.','Mermas','Consumo neto','Stock final','Precio','Valor consumo (EUR)']],body:body.length?body:[['Sin datos','','','','','','','','','']],
-    columnStyles:{2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right',fontStyle:'bold'},7:{halign:'right'},8:{halign:'right'},9:{halign:'right'}},
-    foot:tv?[['Total','','','','','','','','',tv.toFixed(2).replace('.',',')]]:undefined,footStyles:{fillColor:[229,217,205],textColor:30,halign:'right'}});
+  doc.autoTable({...TBL,startY:33,head:[['Producto','Formato','Entradas','Salidas','Devol.','Mermas','Consumo neto','Stock final']],body:body.length?body:[['Sin datos','','','','','','','']],
+    columnStyles:{2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right',fontStyle:'bold'},7:{halign:'right'}}});
   let y=doc.lastAutoTable.finalY+6;
-  const zs=zoneRows(f.zn).map(z=>{let v=0;for(const i of z.items)if(i.p&&i.p.price)v+=i.net*i.p.price;return[z.z,z.t,v?v.toFixed(2).replace('.',','):'-']});
+  const zs=zoneRows(f.zn).map(z=>[z.z,z.t]);
   doc.setFont('helvetica','bold');doc.setFontSize(11);if(y>doc.internal.pageSize.getHeight()-30){doc.addPage();y=20}doc.text('Consumo por zona (todo el evento)',12,y+4);doc.setFont('helvetica','normal');
-  doc.autoTable({...TBL,startY:y+7,head:[['Zona','Unidades consumidas','Valor (EUR)']],body:zs.length?zs:[['Sin salidas','','']],columnStyles:{1:{halign:'right'},2:{halign:'right'}},tableWidth:140});
+  doc.autoTable({...TBL,startY:y+7,head:[['Zona','Unidades consumidas']],body:zs.length?zs:[['Sin salidas','']],columnStyles:{1:{halign:'right'}},tableWidth:120});
   y=doc.lastAutoTable.finalY+6;y=zonePdf(doc,f.zn,y,'Detalle por zona');signLines(doc,y+4,['Responsable de bodega','Revisado por']);
   saveFile(`Resumen bodega ${c.event}.pdf`,doc.output('blob'))}
 function pdfVale(id){const m=view('movements')[id];if(!m)return toast('No se encuentra el movimiento');
