@@ -570,15 +570,19 @@ function vRep(){
    <div class="grid2"><button class="btn primary" data-act="pdf-day">${ic('pdf')}Cierre del día (PDF)</button><button class="btn" data-act="pdf-event">${ic('pdf')}Resumen del evento</button></div>
    <div class="sec"><h2>Cierre · ${esc(fmtDay(D,true))}</h2>
    ${R.rows.length?`<div class="tablewrap"><table><thead><tr><th>Producto</th><th>Inicial</th><th>Entr.</th><th>Salid.</th><th>Dev.</th><th>Merma</th><th>Debería</th><th>Contado</th><th>Dif.</th></tr></thead><tbody>
-   ${R.rows.map(r=>`<tr><td>${esc(r.p.name)}</td><td>${r.ini}</td><td>${r.ent}</td><td>${r.sal}</td><td>${r.dev}</td><td>${r.mer}</td><td>${r.teo}</td><td>${r.cont??'—'}</td><td class="${r.dif?'neg':''}">${r.dif==null?'—':(r.dif>0?'+':'')+r.dif}</td></tr>`).join('')}
-   </tbody></table></div><p class="small muted">En unidades. Periodo: ${R.apC?'desde el conteo de apertura ('+fmtTime(R.ap.closedAt)+')':'desde las 00:00'} hasta ${R.ciC?'el conteo de cierre ('+fmtTime(R.ci.closedAt)+')':'las 24:00'}.</p>`:`<div class="card empty"><b>Sin datos</b><span>No hay stock ni movimientos este día.</span></div>`}</div>
+   ${R.rows.map(r=>{const u=r.p.upc;return `<tr><td>${esc(r.p.name)}</td><td>${qH(r.ini,u)}</td><td>${qH(r.ent,u)}</td><td>${qH(r.sal,u)}</td><td>${qH(r.dev,u)}</td><td>${qH(r.mer,u)}</td><td>${qH(r.teo,u)}</td><td>${qH(r.cont,u)}</td><td class="${r.dif?'neg':''}">${qH(r.dif,u,true)}</td></tr>`}).join('')}
+   </tbody></table></div><p class="small muted">Unidades y, debajo, cajas. Periodo: ${R.apC?'desde el conteo de apertura ('+fmtTime(R.ap.closedAt)+')':'desde las 00:00'} hasta ${R.ciC?'el conteo de cierre ('+fmtTime(R.ci.closedAt)+')':'las 24:00'}.</p>`:`<div class="card empty"><b>Sin datos</b><span>No hay stock ni movimientos este día.</span></div>`}</div>
    <div class="sec"><h2>Consumo por zona</h2>${zoneTable(R.zn)}</div>
    <div class="sec"><h2>Copia de seguridad</h2><div class="card row" style="justify-content:space-between"><span class="small muted" style="flex:1 1 200px">Todos los movimientos del evento en un archivo que abre Excel.</span><button class="btn" data-act="csv">Exportar CSV</button></div></div></div>`}
+/* Cantidad en unidades + cajas, para reportes (pantalla y PDF) */
+function cjText(n,upc){n=Math.round(n||0);if(!upc||upc<=1||!n)return '';const sg=n<0?'-':'',a=Math.abs(n),c=Math.floor(a/upc),r=a%upc;return sg+(c?c+' cj':'')+(c&&r?' + ':'')+(r?r+' u':'')}
+function qP(n,upc,sign){if(n==null)return '-';const t=(sign&&n>0?'+':'')+n;const c=cjText(n,upc);return c?t+'\n'+(sign&&n>0?'+':'')+c:t}
+function qH(n,upc,sign){if(n==null)return '—';const t=(sign&&n>0?'+':'')+n;const c=cjText(n,upc);return c?t+'<br><small class="muted">'+(sign&&n>0?'+':'')+esc(c)+'</small>':t}
 function zoneRows(zn){const out=[];for(const z of cfg().zones){const zz=zn[z];if(!zz)continue;let t=0;const items=[];
   for(const[pid,r]of Object.entries(zz)){const p=P(pid);const net=r.sal-r.dev;t+=net;items.push({p,...r,net})}out.push({z,t,items})}return out}
 function zoneTable(zn){const zs=zoneRows(zn);if(!zs.length)return '<div class="card empty"><span>Sin salidas a zonas en este periodo.</span></div>';
   return `<div class="tablewrap"><table><thead><tr><th>Zona / producto</th><th>Salidas</th><th>Devol.</th><th>Merma</th><th>Consumo</th></tr></thead><tbody>
-  ${zs.map(z=>`<tr><td><b>${esc(z.z)}</b></td><td></td><td></td><td></td><td><b>${z.t}</b></td></tr>`+z.items.map(i=>`<tr><td class="muted">&nbsp;&nbsp;${esc(i.p?i.p.name:'?')}</td><td>${i.sal}</td><td>${i.dev}</td><td>${i.mer}</td><td>${i.net}</td></tr>`).join('')).join('')}</tbody></table></div>`}
+  ${zs.map(z=>`<tr><td><b>${esc(z.z)}</b></td><td></td><td></td><td></td><td><b>${z.t}</b></td></tr>`+z.items.map(i=>{const u=i.p&&i.p.upc;return `<tr><td class="muted">&nbsp;&nbsp;${esc(i.p?i.p.name:'?')}</td><td>${qH(i.sal,u)}</td><td>${qH(i.dev,u)}</td><td>${qH(i.mer,u)}</td><td>${qH(i.net,u)}</td></tr>`}).join('')).join('')}</tbody></table></div>`}
 
 /* --- Más --- */
 function vMas(){const n=products(true).length,h=movs().filter(m=>dayKey(m.at)===todayKey()).length;
@@ -764,8 +768,8 @@ function cuP(v,p){return cu(v,p&&p.upc).replace(/−/g,'-')}
 function signLines(doc,y,labels){const W=doc.internal.pageSize.getWidth(),w=(W-24-10*(labels.length-1))/labels.length;
   if(y>doc.internal.pageSize.getHeight()-30){doc.addPage();y=30}doc.setFontSize(9);labels.forEach((l,i)=>{const x=12+i*(w+10);doc.line(x,y+15,x+w,y+15);doc.text(l,x,y+20)})}
 function pdfDay(D){const R=dayReport(D),doc=newPdf('Inventario de cierre diario',fmtDay(D,true),true);if(!doc)return;
-  doc.setFontSize(9);doc.text(`Periodo: ${R.apC?'conteo de apertura '+fmtTime(R.ap.closedAt):'00:00'} – ${R.ciC?'conteo de cierre '+fmtTime(R.ci.closedAt)+(R.ci.closedBy?' ('+R.ci.closedBy+')':''):'24:00 (cierre sin contar)'}. Cantidades en unidades.`,12,29);
-  const body=R.rows.map(r=>{return[r.p.name,r.p.format||'',r.p.upc||1,r.ini,r.ent,r.sal,r.dev,r.mer,r.teo,r.cont??'-',r.dif==null?'-':(r.dif>0?'+':'')+r.dif]});
+  doc.setFontSize(9);doc.text(`Periodo: ${R.apC?'conteo de apertura '+fmtTime(R.ap.closedAt):'00:00'} – ${R.ciC?'conteo de cierre '+fmtTime(R.ci.closedAt)+(R.ci.closedBy?' ('+R.ci.closedBy+')':''):'24:00 (cierre sin contar)'}. Cada celda: unidades y, debajo, cajas (cj) + unidades sueltas (u).`,12,29);
+  const body=R.rows.map(r=>{const u=r.p.upc;return[r.p.name,r.p.format||'',r.p.upc||1,qP(r.ini,u),qP(r.ent,u),qP(r.sal,u),qP(r.dev,u),qP(r.mer,u),qP(r.teo,u),qP(r.cont,u),qP(r.dif,u,true)]});
   doc.autoTable({...TBL,startY:33,head:[['Producto','Formato','Uds/caja','Inicial','Entradas','Salidas','Devol.','Mermas','Teórico','Contado','Diferencia']],body:body.length?body:[['Sin datos','','','','','','','','','','']],
     columnStyles:{2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right'},8:{halign:'right'},9:{halign:'right',fontStyle:'bold'},10:{halign:'right',fontStyle:'bold'}},
     didParseCell:h=>{if(h.section==='body'&&h.column.index===10&&/^[+-]\d/.test(String(h.cell.raw)))h.cell.styles.textColor=[179,38,30]}});
@@ -774,16 +778,16 @@ function pdfDay(D){const R=dayReport(D),doc=newPdf('Inventario de cierre diario'
   ;saveFile(`Cierre bodega ${D}.pdf`,doc.output('blob'))}
 function zonePdf(doc,zn,y,title){const zs=zoneRows(zn);doc.setFont('helvetica','bold');doc.setFontSize(11);if(y>doc.internal.pageSize.getHeight()-30){doc.addPage();y=20}doc.text(title,12,y+4);doc.setFont('helvetica','normal');
   const body=[];for(const z of zs){body.push([{content:z.z,styles:{fontStyle:'bold',fillColor:[245,240,232]}},{content:'',styles:{fillColor:[245,240,232]}},{content:'',styles:{fillColor:[245,240,232]}},{content:'',styles:{fillColor:[245,240,232]}},{content:String(z.t),styles:{fontStyle:'bold',halign:'right',fillColor:[245,240,232]}}]);
-    for(const i of z.items)body.push(['   '+(i.p?i.p.name:'?'),i.sal,i.dev,i.mer,i.net])}
+    for(const i of z.items){const u=i.p&&i.p.upc;body.push(['   '+(i.p?i.p.name:'?'),qP(i.sal,u),qP(i.dev,u),qP(i.mer,u),qP(i.net,u)])}}
   doc.autoTable({...TBL,startY:y+7,head:[['Zona / producto','Salidas','Devoluciones','Merma en zona','Consumo neto']],body:body.length?body:[['Sin salidas a zonas','','','','']],columnStyles:{1:{halign:'right'},2:{halign:'right'},3:{halign:'right'},4:{halign:'right'}}});
   return doc.lastAutoTable.finalY+6}
 function pdfEvent(){const c=cfg(),days=[...c.days].sort(),doc=newPdf('Resumen del evento',fmtDay(days[0])+' – '+fmtDay(days[days.length-1]),true);if(!doc)return;
   const f=flows(null,null),{st,base}=stockAt(null);
   const body=products(true).map(p=>{const r=f.pr[p.id]||{ent:0,sal:0,dev:0,mer:0,merZ:0},net=r.sal-r.dev;
-    return(r.ent||r.sal||r.dev||r.mer||st[p.id])?[p.name,p.format||'',r.ent,r.sal,r.dev,r.mer+r.merZ,net,st[p.id]||0]:null}).filter(Boolean);
-  doc.setFontSize(9);doc.text(`Stock final: ${base?'último conteo '+fmtDay(dayKey(base.closedAt))+' '+fmtTime(base.closedAt)+' más movimientos posteriores':'teórico (no hay conteos cerrados)'}. Consumo neto = salidas - devoluciones.`,12,29);
-  doc.autoTable({...TBL,startY:33,head:[['Producto','Formato','Entradas','Salidas','Devol.','Mermas','Consumo neto','Stock final']],body:body.length?body:[['Sin datos','','','','','','','']],
-    columnStyles:{2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right',fontStyle:'bold'},7:{halign:'right'}}});
+    return(r.ent||r.sal||r.dev||r.mer||st[p.id])?[p.name,p.format||'',p.upc||1,qP(r.ent,p.upc),qP(r.sal,p.upc),qP(r.dev,p.upc),qP(r.mer+r.merZ,p.upc),qP(net,p.upc),qP(st[p.id]||0,p.upc)]:null}).filter(Boolean);
+  doc.setFontSize(9);doc.text(`Stock final: ${base?'último conteo '+fmtDay(dayKey(base.closedAt))+' '+fmtTime(base.closedAt)+' más movimientos posteriores':'teórico (no hay conteos cerrados)'}. Consumo neto = salidas - devoluciones. Cada celda: unidades y, debajo, cajas (cj) + unidades sueltas (u).`,12,29);
+  doc.autoTable({...TBL,startY:33,head:[['Producto','Formato','Uds/caja','Entradas','Salidas','Devol.','Mermas','Consumo neto','Stock final']],body:body.length?body:[['Sin datos','','','','','','','','']],
+    columnStyles:{2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right',fontStyle:'bold'},8:{halign:'right'}}});
   let y=doc.lastAutoTable.finalY+6;
   const zs=zoneRows(f.zn).map(z=>[z.z,z.t]);
   doc.setFont('helvetica','bold');doc.setFontSize(11);if(y>doc.internal.pageSize.getHeight()-30){doc.addPage();y=20}doc.text('Consumo por zona (todo el evento)',12,y+4);doc.setFont('helvetica','normal');

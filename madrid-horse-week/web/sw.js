@@ -1,5 +1,5 @@
 /* Bodega MHW: permite abrir la app sin cobertura. Los datos NO pasan por aquí (van a Supabase). */
-const CACHE='bodega-mhw-v5';
+const CACHE='bodega-mhw-v6';
 const PRE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js',
