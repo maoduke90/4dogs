@@ -568,7 +568,7 @@ function vRep(){
   const D=S.repDay||S.day,R=dayReport(D);
   return `<div class="stack"><div class="hello"><span class="eyebrow">Para entregar</span><h1>Reportes</h1></div>${dayChips(D,'rep-day')}
    ${!R.ciC?`<div class="notice">${ic('alert')}<div>El conteo de cierre de este día no está cerrado: el reporte muestra lo que debería haber, sin comparar con lo contado.</div></div>`:''}
-   <button class="btn primary block" data-act="pdf-simple">${ic('pdf')}Consumo e inventario final (PDF)</button>
+   <button class="btn primary block" data-act="pdf-simple">${ic('pdf')}Inicial, consumo y final (PDF)</button>
    <div class="grid2"><button class="btn" data-act="pdf-day">${ic('pdf')}Cierre detallado (PDF)</button><button class="btn" data-act="pdf-event">${ic('pdf')}Resumen del evento</button></div>
    <div class="sec"><h2>Cierre · ${esc(fmtDay(D,true))}</h2>
    ${R.rows.length?`<div class="tablewrap"><table><thead><tr><th>Producto</th><th>Inicial</th><th>Entr.</th><th>Salid.</th><th>Dev.</th><th>Merma</th><th>Debería</th><th>Contado</th><th>Dif.</th></tr></thead><tbody>
@@ -788,12 +788,16 @@ function zonePdf(doc,zn,y,title){const zs=zoneRows(zn);doc.setFont('helvetica','
     for(const i of z.items){const u=i.p&&i.p.upc;body.push(['   '+(i.p?i.p.name:'?'),qP(i.sal,u),qP(i.dev,u),qP(i.mer,u),qP(i.net,u)])}}
   doc.autoTable({...TBL,startY:y+7,head:[['Zona / producto','Salidas','Devoluciones','Merma en zona','Consumo neto']],body:body.length?body:[['Sin salidas a zonas','','','','']],columnStyles:{1:{halign:'right'},2:{halign:'right'},3:{halign:'right'},4:{halign:'right'}}});
   return doc.lastAutoTable.finalY+6}
-function pdfSimple(D){const R=dayReport(D),doc=newPdf('Inventario del día',fmtDay(D,true),false);if(!doc)return;
-  const body=R.rows.map(r=>{const u=r.p.upc;return[r.p.name,qP(r.sal+r.mer-r.dev,u),R.ciC?qP(r.cont,u):qP(r.teo,u)]});
-  doc.setFontSize(9);doc.text('Consumo: salidas de bodega a zonas + mermas - devoluciones ('+(R.apC?fmtTime(R.ap.closedAt):'00:00')+' - '+(R.ciC?fmtTime(R.ci.closedAt):'24:00')+').',12,29);
-  doc.text(R.ciC?'Inventario final: conteo de cierre de las '+fmtTime(R.ci.closedAt)+(R.ci.closedBy?' ('+R.ci.closedBy+')':'')+'.':'Inventario final: TEÓRICO (el conteo de cierre de este día aún no está cerrado).',12,33.5);
-  doc.autoTable({...TBL,startY:38,head:[['Producto','Consumo','Inventario final']],body:body.length?body:[['Sin datos','','']],styles:{fontSize:9,cellPadding:1.8},
-    columnStyles:{0:{cellWidth:100},1:{halign:'right'},2:{halign:'right',fontStyle:'bold'}}});
+function pdfSimple(D){const R=dayReport(D),doc=newPdf('Inventario del evento',fmtDay(D,true),false);if(!doc)return;
+  const end=R.ciC?R.ci.closedAt:midnight(nextDay(D)),rec={};
+  for(const m of activeMovs())if(m.type==='entrada'&&m.at<=end)for(const[k,v]of Object.entries(m.items||{}))rec[k]=(rec[k]||0)+v;
+  const fin=R.ciC?(R.ci.items||{}):stockAt(end).st;
+  const body=products(true).filter(p=>rec[p.id]||fin[p.id]).map(p=>{const u=p.upc,i=rec[p.id]||0,f=Math.max(0,fin[p.id]||0);return[p.name,qP(i,u),qP(i-f,u),qP(f,u)]});
+  doc.setFontSize(9);doc.text('Inventario inicial: toda la mercancía recibida (entradas de proveedor) hasta '+fmtDay(D)+'.',12,29);
+  doc.text('Consumo: inicial - final. Inventario final: '+(R.ciC?'conteo de cierre de las '+fmtTime(R.ci.closedAt)+' (bodega + zonas).':'TEÓRICO (el cierre de este día aún no está hecho).'),12,33.5);
+  doc.autoTable({...TBL,startY:38,head:[['Producto','Inventario inicial','Consumo','Inventario final']],body:body.length?body:[['Sin datos','','','']],styles:{fontSize:9,cellPadding:1.8},
+    columnStyles:{0:{cellWidth:78},1:{halign:'right'},2:{halign:'right'},3:{halign:'right',fontStyle:'bold'}},
+    didParseCell:h=>{if(h.section==='body'&&h.column.index===2&&/^-\d/.test(String(h.cell.raw)))h.cell.styles.textColor=[179,38,30]}});
   signLines(doc,doc.lastAutoTable.finalY+6,['Responsable de bodega','Revisado por']);
   saveFile(`Inventario bodega ${D}.pdf`,doc.output('blob'))}
 function pdfEvent(){const c=cfg(),days=[...c.days].sort(),doc=newPdf('Resumen del evento',fmtDay(days[0])+' – '+fmtDay(days[days.length-1]),true);if(!doc)return;
