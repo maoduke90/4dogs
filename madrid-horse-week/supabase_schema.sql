@@ -1,0 +1,6 @@
+-- Base de datos de la bodega: proyecto Supabase "Madrid Horse Week" (cuenta Brizo, Frankfurt).
+-- Los PIN NO están aquí: se guardan cifrados en public.bodega_pins y se cambian desde la app (Ajustes, PIN de responsable).
+-- Migración aplicada: "bodega_mhw_schema".
+--   bodega_docs (path, col, data jsonb, deleted, updated_at)  -- tabla privada, sin acceso directo
+--   bodega_api_login(pin) · bodega_api_changes(pin, since) · bodega_api_write(pin, op, path, data) · bodega_api_set_pin(pin_admin, role, nuevo)
+--   Borrar movimientos o conteos solo con el PIN de responsable. 30 PIN fallidos en 15 min bloquean el acceso 15 min.
