@@ -660,7 +660,12 @@ document.addEventListener('click',e=>{
     vale(){pdfVale(d.id)},
     'cnt-day'(){S.day=d.day;render()},'cnt-kind'(){S.cntKind=d.kind;render()},
     'cnt-start'(){enqueue('counts/'+S.day+'_'+S.cntKind,'set',{day:S.day,kind:S.cntKind,status:'draft',items:{},startedBy:S.me||'',startedAt:new Date().toISOString()})},
-    'cnt-close'(){const id=S.day+'_'+S.cntKind,c=counts()[id],items={...(c.items||{})};for(const p of products())if(items[p.id]==null)items[p.id]=0;
+    'cnt-close'(){const id=S.day+'_'+S.cntKind,c=counts()[id],items={...(c.items||{})};
+      const ps=products(),miss=ps.filter(p=>items[p.id]==null);
+      if(miss.length===ps.length)return toast('No has contado ningún producto. Cuenta antes de cerrar.');
+      if(miss.length&&!confirm('Has contado '+(ps.length-miss.length)+' de '+ps.length+' productos.\n\nLos '+miss.length+' sin contar se pondrán a 0 y el stock de esos productos quedará en 0.\n\n¿Cerrar el conteo igualmente?'))return;
+      if(!miss.length&&!confirm('¿Cerrar el conteo? Lo contado pasa a ser el stock de la bodega.'))return;
+      for(const p of ps)if(items[p.id]==null)items[p.id]=0;
       enqueue('counts/'+id,'update',{items,status:'closed',closedAt:new Date().toISOString(),closedBy:S.me||''});toast('Conteo cerrado')},
     'cnt-reopen'(){enqueue('counts/'+S.day+'_'+S.cntKind,'update',{status:'draft',closedAt:null})},
     'hist-day'(){S.day=d.day;S.open=null;render()},'hist-type'(){S.histType=d.type;render()},
